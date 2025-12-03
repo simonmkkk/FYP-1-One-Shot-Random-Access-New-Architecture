@@ -3,24 +3,33 @@ Figure 2 解析數據生成
 
 近似誤差分析 - 按照論文 Figure 2
 誤差 = |Analytical - Approximation| / |Analytical| * 100%
+
+Note: Figure 2 直接使用 Figure 1 的計算結果，避免重複運算。
 """
 
 import csv
 from pathlib import Path
 from datetime import datetime
-from .figure1_analysis import run_figure1_analysis
+from .figure1_analysis import run_figure1_analysis, load_figure1_results
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure2_analysis(config: dict, save_csv: bool = True) -> dict:
+def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = None) -> dict:
     """
     運行 Figure 2 解析計算（基於 Figure 1 數據）
+    
+    Figure 2 是 Figure 1 的誤差分析，需要 Figure 1 的結果。
+    優先順序：
+    1. 使用傳入的 fig1_data 參數
+    2. 嘗試讀取已保存的 Figure 1 結果
+    3. 重新運算 Figure 1
     
     Args:
         config: 配置字典
         save_csv: 是否保存結果到 CSV
+        fig1_data: 可選，直接傳入 Figure 1 的計算結果，避免重複運算
     
     Returns:
         結果字典
@@ -32,8 +41,29 @@ def run_figure2_analysis(config: dict, save_csv: bool = True) -> dict:
     print(f"N 值: {n_values}")
     print("=" * 60)
     
-    # 先運行 Figure 1 獲取基礎數據（不保存 CSV，因為 Figure 2 會自己保存）
-    fig1_data = run_figure1_analysis(config, save_csv=False)
+    # 獲取 Figure 1 數據的優先順序
+    if fig1_data is not None:
+        print("\n✓ 使用傳入的 Figure 1 數據")
+    else:
+        # 嘗試讀取已保存的結果
+        print("\n嘗試讀取已保存的 Figure 1 結果...")
+        fig1_data = load_figure1_results()
+        
+        if fig1_data is not None:
+            # 驗證讀取的數據是否包含所需的 N 值
+            required_keys = {f'N_{N}' for N in n_values}
+            available_keys = set(fig1_data.keys())
+            
+            if required_keys.issubset(available_keys):
+                print("✓ 已找到所需的 Figure 1 數據，跳過重複運算")
+            else:
+                missing = required_keys - available_keys
+                print(f"⚠ 缺少部分 N 值的數據: {missing}")
+                print("  重新運算 Figure 1...")
+                fig1_data = run_figure1_analysis(config, save_csv=True)
+        else:
+            print("⚠ 未找到已保存的 Figure 1 結果，開始運算...")
+            fig1_data = run_figure1_analysis(config, save_csv=True)
     
     print("\n正在計算誤差數據...")
     

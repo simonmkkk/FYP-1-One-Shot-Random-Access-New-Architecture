@@ -142,8 +142,11 @@ def run_analytical_figure1():
 
 
 def run_analytical_figure2():
-    """[選項 2] Figure 2: 近似誤差分析（精確 vs 近似）"""
-    config = load_config('analytical', 'figure2')
+    """[選項 2] Figure 2: 近似誤差分析（精確 vs 近似）
+    
+    Note: Figure 2 使用 Figure 1 的配置，因為兩者基於相同的運算。
+    """
+    config = load_config('analytical', 'figure1')  # 使用 Figure 1 配置
     run_figure2_analysis(config)
 
 
@@ -158,12 +161,14 @@ def run_analytical_all():
     print(f"\n{'='*60}")
     print("正在運行 Figure 1 解析計算...")
     print(f"{'='*60}")
-    run_analytical_figure1()
+    config = load_config('analytical', 'figure1')
+    fig1_data = run_figure1_analysis(config)
     
     print(f"\n{'='*60}")
-    print("正在運行 Figure 2 解析計算...")
+    print("正在運行 Figure 2 解析計算 (使用 Figure 1 結果)...")
     print(f"{'='*60}")
-    run_analytical_figure2()
+    # 直接傳入 Figure 1 的結果，避免重複運算
+    run_figure2_analysis(config, fig1_data=fig1_data)
     
     print(f"\n{'='*60}")
     print("正在運行 Figure 3, 4, 5 合併解析計算...")

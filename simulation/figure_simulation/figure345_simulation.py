@@ -9,7 +9,8 @@ Figure 3, 4, 5 合併模擬
 這三個 Figure 使用相同的模擬，只是提取不同的指標。
 合併執行可避免重複計算，提升效率。
 
-模擬完成後會自動計算 Approximation Error（與 Analytical 結果對比）。
+模擬完成後會自動計算 Approximation Error（與近似公式結果對比）。
+根據論文定義: Error = |Approximation - Simulation| / |Approximation| * 100%
 
 記憶體優化：每次 N 迴圈後強制 gc，避免記憶體累積。
 """
@@ -27,21 +28,25 @@ from analytical.figure_analysis import load_figure345_results
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def calculate_approximation_error(analytical_value: float, simulation_value: float) -> float:
+def calculate_approximation_error(approximation_value: float, simulation_value: float) -> float:
     """
-    計算近似誤差百分比
+    計算近似誤差百分比（根據論文定義）
     
-    公式: |Analytical - Simulation| / |Analytical| * 100%
+    論文原文: "The approximation error, which is the absolute difference 
+    of the approximation result and the simulation result and normalized 
+    by the analytical result"
+    
+    公式: |Approximation - Simulation| / |Approximation| * 100%
     
     Args:
-        analytical_value: 解析計算值
+        approximation_value: 近似公式計算值 (Eqs. 8-10)
         simulation_value: 模擬值
     
     Returns:
         誤差百分比
     """
-    if analytical_value != 0:
-        return abs(analytical_value - simulation_value) / abs(analytical_value) * 100
+    if approximation_value != 0:
+        return abs(approximation_value - simulation_value) / abs(approximation_value) * 100
     else:
         return abs(simulation_value) * 100 if simulation_value != 0 else 0.0
 
@@ -115,28 +120,29 @@ def run_figure345_simulation(config: dict) -> dict:
     print("Figure 3, 4, 5 合併模擬完成!")
     print("=" * 70)
     
-    # 計算 Approximation Error（與 Analytical 結果對比）
+    # 計算 Approximation Error（與近似公式結果對比）
+    # 根據論文: Error = |Approximation - Simulation| / |Approximation| * 100%
     print("\n正在計算 Approximation Error...")
-    analytical_data = load_figure345_results()
+    approximation_data = load_figure345_results()  # 這是近似公式的結果
     
-    if analytical_data is not None:
+    if approximation_data is not None:
         # 建立 N -> index 的映射
-        anal_dict = {N: i for i, N in enumerate(analytical_data['N_values'])}
+        approx_dict = {N: i for i, N in enumerate(approximation_data['N_values'])}
         
         P_S_error = []
         T_a_error = []
         P_C_error = []
         
         for i, N in enumerate(N_values):
-            if N in anal_dict:
-                anal_idx = anal_dict[N]
-                anal_ps = analytical_data['P_S_values'][anal_idx]
-                anal_ta = analytical_data['T_a_values'][anal_idx]
-                anal_pc = analytical_data['P_C_values'][anal_idx]
+            if N in approx_dict:
+                approx_idx = approx_dict[N]
+                approx_ps = approximation_data['P_S_values'][approx_idx]
+                approx_ta = approximation_data['T_a_values'][approx_idx]
+                approx_pc = approximation_data['P_C_values'][approx_idx]
                 
-                P_S_error.append(calculate_approximation_error(anal_ps, P_S_values[i]))
-                T_a_error.append(calculate_approximation_error(anal_ta, T_a_values[i]))
-                P_C_error.append(calculate_approximation_error(anal_pc, P_C_values[i]))
+                P_S_error.append(calculate_approximation_error(approx_ps, P_S_values[i]))
+                T_a_error.append(calculate_approximation_error(approx_ta, T_a_values[i]))
+                P_C_error.append(calculate_approximation_error(approx_pc, P_C_values[i]))
             else:
                 # 如果找不到對應的 N 值，設為 None
                 P_S_error.append(None)
@@ -149,7 +155,7 @@ def run_figure345_simulation(config: dict) -> dict:
         
         print("✓ Approximation Error 計算完成")
     else:
-        print("⚠ 找不到 Analytical 結果，無法計算 Approximation Error")
+        print("⚠ 找不到 Approximation 結果，無法計算 Approximation Error")
         print("  請先運行選項 3 進行解析計算")
     
     # 保存結果到 CSV
