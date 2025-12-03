@@ -1,0 +1,21 @@
+# Figure 3, 4, 5 合併模擬配置
+# 同時計算: P_S (接入成功率), T_a (平均接入延遲), P_C (碰撞概率)
+description: "Figure 3, 4, 5: Combined Simulation (P_S, T_a, P_C)"
+
+simulation:
+  M: 100                     # 設備總數
+  I_max: 10                  # 最大接入周期數
+
+scan:
+  parameter: N               # 掃描參數
+  range:
+    start: 5
+    stop: 46
+    step: 1
+
+performance:
+  num_samples: 300000      # 樣本數量 10^7（論文要求）
+  num_workers: -1            # 並行線程數 (-1 表示使用所有 CPU 核心)
+
+output:
+  save_csv: true

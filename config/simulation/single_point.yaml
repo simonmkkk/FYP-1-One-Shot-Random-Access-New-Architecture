@@ -1,0 +1,17 @@
+# 單點模擬配置
+# 詳細分析單個參數組合
+description: "Single Point Detailed Simulation"
+
+simulation:
+  M: 100                     # 設備總數
+  N: 40                      # RAO 數量
+  I_max: 10                  # 最大接入周期數
+
+performance:
+  num_samples: 1000          # 樣本數量
+  num_workers: 16            # 並行線程數
+
+output:
+  save_csv: true
+  show_details: true         # 顯示詳細過程
+

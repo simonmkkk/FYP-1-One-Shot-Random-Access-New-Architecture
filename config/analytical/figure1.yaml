@@ -1,0 +1,14 @@
+# Figure 1 解析計算配置
+# NS,1/N & NC,1/N vs M/N - 分析模型 vs 近似公式
+
+# N 值列表 (論文: N=3 and 14，這裡用 6 代替 14 加速計算)
+n_values: [3, 14]
+
+# M 範圍係數 (論文: M up to 10N)
+m_over_n_max: 10
+
+# M 起始值 (論文: M ranging from 1)
+m_start: 1
+
+# 並行計算核心數 (-1 表示使用所有核心)
+n_jobs: -1
