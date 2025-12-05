@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None):
+def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None, show: bool = False):
     """
     繪製 Figure 3 - Access Success Probability
     
@@ -18,6 +18,7 @@ def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, sav
         analytical_data: 解析數據（包含 N_values, P_S_values）
         simulation_data: 模擬數據（包含 N_values, P_S_values, P_S_error）
         save_path: 保存路徑
+        show: 是否顯示圖表
     
     Returns:
         Figure 對象
@@ -79,10 +80,13 @@ def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, sav
         fig.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"✓ Figure 3 已保存: {save_path}")
     
+    if show:
+        plt.show()
+    
     return fig
 
 
-def plot_figure4(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None):
+def plot_figure4(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None, show: bool = False):
     """
     繪製 Figure 4 - Mean Access Delay
     
@@ -90,6 +94,7 @@ def plot_figure4(analytical_data: dict = None, simulation_data: dict = None, sav
         analytical_data: 解析數據（包含 N_values, T_a_values）
         simulation_data: 模擬數據（包含 N_values, T_a_values, T_a_error）
         save_path: 保存路徑
+        show: 是否顯示圖表
     
     Returns:
         Figure 對象
@@ -149,10 +154,13 @@ def plot_figure4(analytical_data: dict = None, simulation_data: dict = None, sav
         fig.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"✓ Figure 4 已保存: {save_path}")
     
+    if show:
+        plt.show()
+    
     return fig
 
 
-def plot_figure5(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None):
+def plot_figure5(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None, show: bool = False):
     """
     繪製 Figure 5 - Collision Probability
     
@@ -160,6 +168,7 @@ def plot_figure5(analytical_data: dict = None, simulation_data: dict = None, sav
         analytical_data: 解析數據（包含 N_values, P_C_values）
         simulation_data: 模擬數據（包含 N_values, P_C_values, P_C_error）
         save_path: 保存路徑
+        show: 是否顯示圖表
     
     Returns:
         Figure 對象
@@ -218,6 +227,9 @@ def plot_figure5(analytical_data: dict = None, simulation_data: dict = None, sav
     if save_path:
         fig.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"✓ Figure 5 已保存: {save_path}")
+    
+    if show:
+        plt.show()
     
     return fig
 

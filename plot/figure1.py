@@ -17,7 +17,7 @@ import numpy as np
 from .common import extract_n_values_from_data
 
 
-def plot_figure1(data: dict, data_type: str = 'analytical', save_path: str = None):
+def plot_figure1(data: dict, data_type: str = 'analytical', save_path: str = None, show: bool = False):
     """
     繪製 Figure 1 - 按照論文樣式
     
@@ -29,6 +29,7 @@ def plot_figure1(data: dict, data_type: str = 'analytical', save_path: str = Non
         data: 數據字典
         data_type: 'analytical' 或 'simulation'
         save_path: 保存路徑
+        show: 是否顯示圖表
     
     Returns:
         Figure 對象
@@ -174,6 +175,9 @@ def plot_figure1(data: dict, data_type: str = 'analytical', save_path: str = Non
     if save_path:
         fig.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"✓ Figure 1 已保存: {save_path}")
+    
+    if show:
+        plt.show()
     
     return fig
 

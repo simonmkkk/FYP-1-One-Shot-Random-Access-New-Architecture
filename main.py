@@ -22,8 +22,6 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-import matplotlib.pyplot as plt
-
 from config import load_config
 from analytical.figure_analysis import (
     run_figure1_analysis,
@@ -196,7 +194,7 @@ def run_simulation_figure345():
 # ============================================================================
 
 def run_plot_figure1(show: bool = True):
-    """[選項 6] 繪製 Figure 1"""
+    """【選項 6】繪製 Figure 1"""
     print("從 CSV 讀取 Figure 1 數據...")
     data = load_figure1_results()
     if data is None:
@@ -205,14 +203,11 @@ def run_plot_figure1(show: bool = True):
     
     result_dir = get_result_dir('graph', 'figure1')
     save_path = result_dir / "figure1.png"
-    plot_figure1(data, data_type='analytical', save_path=str(save_path))
-    
-    if show:
-        plt.show()
+    plot_figure1(data, data_type='analytical', save_path=str(save_path), show=show)
 
 
 def run_plot_figure2(show: bool = True):
-    """[選項 7] 繪製 Figure 2"""
+    """【選項 7】繪製 Figure 2"""
     print("從 CSV 讀取 Figure 2 數據...")
     data = load_figure2_results()
     if data is None:
@@ -221,10 +216,7 @@ def run_plot_figure2(show: bool = True):
     
     result_dir = get_result_dir('graph', 'figure2')
     save_path = result_dir / "figure2.png"
-    plot_figure2(data, save_path=str(save_path))
-    
-    if show:
-        plt.show()
+    plot_figure2(data, save_path=str(save_path), show=show)
 
 
 def run_plot_figure345(show: bool = True):
@@ -238,7 +230,7 @@ def run_plot_figure345(show: bool = True):
     else:
         result_dir = get_result_dir('graph', 'figure3')
         save_path = result_dir / "figure3.png"
-        plot_figure3(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path))
+        plot_figure3(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path), show=False)
     
     # Figure 4
     print("從 CSV 讀取 Figure 4 數據...")
@@ -249,7 +241,7 @@ def run_plot_figure345(show: bool = True):
     else:
         result_dir = get_result_dir('graph', 'figure4')
         save_path = result_dir / "figure4.png"
-        plot_figure4(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path))
+        plot_figure4(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path), show=False)
     
     # Figure 5
     print("從 CSV 讀取 Figure 5 數據...")
@@ -260,14 +252,11 @@ def run_plot_figure345(show: bool = True):
     else:
         result_dir = get_result_dir('graph', 'figure5')
         save_path = result_dir / "figure5.png"
-        plot_figure5(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path))
-    
-    if show:
-        plt.show()
+        plot_figure5(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path), show=show)
 
 
 def run_plot_all():
-    """[選項 9] 繪製所有圖表"""
+    """【選項 9】繪製所有圖表"""
     print("\n正在繪製 Figure 1...")
     run_plot_figure1(show=False)
     
@@ -275,9 +264,7 @@ def run_plot_all():
     run_plot_figure2(show=False)
     
     print("\n正在繪製 Figure 3, 4, 5...")
-    run_plot_figure345(show=False)
-    
-    plt.show()
+    run_plot_figure345(show=True)
 
 
 # ============================================================================

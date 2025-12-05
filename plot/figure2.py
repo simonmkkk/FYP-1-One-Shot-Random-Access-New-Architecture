@@ -16,7 +16,7 @@ from matplotlib.gridspec import GridSpec
 from .common import extract_n_values_from_data
 
 
-def plot_figure2(data: dict, save_path: str = None):
+def plot_figure2(data: dict, save_path: str = None, show: bool = False):
     """
     繪製 Figure 2 - 按照論文樣式
     
@@ -27,6 +27,7 @@ def plot_figure2(data: dict, save_path: str = None):
     Args:
         data: 誤差數據字典
         save_path: 保存路徑
+        show: 是否顯示圖表
     
     Returns:
         Figure 對象
@@ -140,6 +141,9 @@ def plot_figure2(data: dict, save_path: str = None):
     if save_path:
         fig.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"✓ Figure 2 已保存: {save_path}")
+    
+    if show:
+        plt.show()
     
     return fig
 
