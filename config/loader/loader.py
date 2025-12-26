@@ -15,7 +15,7 @@ from typing import Any, Dict, Optional
 
 def get_config_dir() -> Path:
     """獲取配置文件目錄的絕對路徑"""
-    return Path(__file__).parent
+    return Path(__file__).parent.parent
 
 
 def get_config_path(config_type: str, config_name: str) -> Path:

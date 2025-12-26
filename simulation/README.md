@@ -1,11 +1,11 @@
-# Simulation 模块架构说明
+# Simulation Module Architecture Documentation
 
-模拟模块，提供蒙特卡洛模拟功能，用于验证理论计算结果。包含单次接入模拟、群组寻呼模拟、性能指标计算、各图表模拟。
+Simulation module that provides Monte Carlo simulation functionality for validating theoretical calculation results. Contains single access simulation, group paging simulation, performance metric calculation, and figure simulations.
 
-**文件列表：**
-- `__init__.py` - 模块导出接口，导出模拟相关函数
-- `core/` - 核心模拟引擎子模块
-- `figure_simulation/` - 各图表模拟子模块
+**File List:**
+- `__init__.py` - Module export interface, exports simulation-related functions
+- `core/` - Core simulation engine submodule
+- `figure_simulation/` - Figure simulation submodule
 
-**一旦我所属的文件夹有所变化，请更新我。**
+**Please update me if the folder I belong to changes.**
 

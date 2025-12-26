@@ -1,13 +1,13 @@
-# Plot 模块架构说明
+# Plot Module Architecture Documentation
 
-绘图模块，负责从CSV数据读取并绘制论文中的各个图表。
+Plotting module responsible for reading CSV data and plotting various figures from the paper.
 
-**文件列表：**
-- `__init__.py` - 模块导出接口，导出所有绘图函数
-- `common.py` - 共用绘图设定，提供matplotlib配置、字体设置、数据提取工具函数
-- `figure1.py` - Figure 1绘图，绘制NS,1/N和NC,1/N的精确公式与近似公式对比
-- `figure2.py` - Figure 2绘图，绘制近似误差分析图
-- `figure345.py` - Figure 3-5绘图，绘制P_S、T_a、P_C的理论曲线、模拟结果和误差曲线
+**File List:**
+- `__init__.py` - Module export interface, exports all plotting functions
+- `common.py` - Common plotting settings, provides matplotlib configuration, font settings, and data extraction utility functions
+- `figure1.py` - Figure 1 plotting, plots comparison of exact and approximate formulas for NS,1/N and NC,1/N
+- `figure2.py` - Figure 2 plotting, plots approximation error analysis
+- `figure345.py` - Figure 3-5 plotting, plots theoretical curves, simulation results, and error curves for P_S, T_a, P_C
 
-**一旦我所属的文件夹有所变化，请更新我。**
+**Please update me if the folder I belong to changes.**
 

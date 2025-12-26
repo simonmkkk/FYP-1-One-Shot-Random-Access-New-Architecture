@@ -1,12 +1,12 @@
-# Simulation Core 子模块架构说明
+# Simulation Core Submodule Architecture Documentation
 
-核心模拟引擎子模块，提供底层模拟功能和性能指标计算。
+Core simulation engine submodule that provides low-level simulation functionality and performance metric calculation.
 
-**文件列表：**
-- `__init__.py` - 子模块导出接口，导出核心模拟函数
-- `one_shot_access.py` - 单次随机接入模拟，模拟单个AC周期的接入过程
-- `group_paging.py` - 群组寻呼模拟，模拟多个AC周期的完整过程，支持多线程并行
-- `metrics.py` - 性能指标计算，计算P_S、T_a、P_C的均值和置信区间
+**File List:**
+- `__init__.py` - Submodule export interface, exports core simulation functions
+- `one_shot_access.py` - Single random access simulation, simulates the access process of a single AC cycle
+- `group_paging.py` - Group paging simulation, simulates the complete process of multiple AC cycles, supports multi-threaded parallelization
+- `metrics.py` - Performance metric calculation, calculates mean values and confidence intervals for P_S, T_a, P_C
 
-**一旦我所属的文件夹有所变化，请更新我。**
+**Please update me if the folder I belong to changes.**
 

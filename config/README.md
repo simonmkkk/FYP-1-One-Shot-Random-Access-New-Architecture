@@ -1,12 +1,13 @@
-# Config 模块架构说明
+# Config Module Architecture Documentation
 
-配置管理模块，负责加载和管理YAML配置文件。
+Configuration management module responsible for loading and managing YAML configuration files.
 
-**文件列表：**
-- `__init__.py` - 模块导出接口，导出配置加载函数
-- `loader.py` - 配置加载器，提供从YAML文件加载配置的功能
-- `analytical/` - 解析模型配置子目录
-- `simulation/` - 模拟配置子目录
+**File List:**
 
-**一旦我所属的文件夹有所变化，请更新我。**
+- `__init__.py` - Module export interface, exports configuration loading functions
+- `loader/` - Configuration loader submodule, provides functionality to load configurations from YAML files
+- `analytical/` - Analytical model configuration subdirectory
+- `simulation/` - Simulation configuration subdirectory
+
+**Please update me if the folder I belong to changes.**
 

@@ -1,12 +1,13 @@
-# Analytical 模块架构说明
+# Analytical Module Architecture Documentation
 
-解析/数学模型模块，提供论文公式实现和理论计算功能。包含公式定义、多周期迭代计算、各图表解析计算。
+Analytical/mathematical model module that provides paper formula implementations and theoretical calculation functions. Contains formula definitions, multi-cycle iterative calculations, and figure analysis calculations.
 
-**文件列表：**
-- `__init__.py` - 模块导出接口，导出所有公式和理论计算函数
-- `formulas.py` - 论文公式实现（Eq. 1-10），提供精确公式、近似公式、迭代公式、性能指标公式
-- `theoretical.py` - 理论计算模块，使用公式进行多周期迭代计算性能指标（P_S, T_a, P_C）
-- `figure_analysis/` - 各图表解析计算子模块
+**File List:**
 
-**一旦我所属的文件夹有所变化，请更新我。**
+- `__init__.py` - Module export interface, exports all formulas and theoretical calculation functions
+- `formulas/` - Paper formula implementations submodule (Eq. 1-10), provides exact formulas, approximate formulas, iterative formulas, and performance metric formulas
+- `theoretical/` - Theoretical calculation submodule, uses formulas for multi-cycle iterative calculation of performance metrics (P_S, T_a, P_C)
+- `figure_analysis/` - Figure analysis calculation submodule
+
+**Please update me if the folder I belong to changes.**
 

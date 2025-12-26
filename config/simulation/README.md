@@ -1,10 +1,10 @@
-# Simulation Config 子目录说明
+# Simulation Config Subdirectory Documentation
 
-模拟配置子目录，存放各图表的模拟配置文件。
+Simulation configuration subdirectory that stores simulation configuration files for each figure.
 
-**文件列表：**
-- `figure345.yaml` - Figure 3-5合并模拟配置，定义模拟参数、扫描参数、性能参数等
-- `single_point.yaml` - 单点测试配置，用于快速验证单个参数组合的模拟结果
+**File List:**
+- `figure345.yaml` - Figure 3-5 combined simulation configuration, defines simulation parameters, scan parameters, performance parameters, etc.
+- `single_point.yaml` - Single point test configuration, used for quick verification of simulation results for a single parameter combination
 
-**一旦我所属的文件夹有所变化，请更新我。**
+**Please update me if the folder I belong to changes.**
 

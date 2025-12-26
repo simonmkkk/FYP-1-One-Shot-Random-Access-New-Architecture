@@ -15,7 +15,7 @@ import time
 from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from ..formulas import (
+from ..formulas.formulas import (
     paper_formula_2_collision_raos_exact,
     paper_formula_3_success_raos_exact,
     paper_formula_4_success_approx,

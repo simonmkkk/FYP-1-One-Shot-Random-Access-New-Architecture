@@ -10,7 +10,7 @@
 """
 
 import numpy as np
-from .formulas import (
+from ..formulas.formulas import (
     paper_formula_5_collision_approx,
     paper_formula_6_success_per_cycle,
     paper_formula_7_next_contending_devices, 

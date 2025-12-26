@@ -19,7 +19,7 @@ import csv
 from pathlib import Path
 from datetime import datetime
 
-from ..theoretical import theoretical_calculation
+from ..theoretical.theoretical import theoretical_calculation
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
