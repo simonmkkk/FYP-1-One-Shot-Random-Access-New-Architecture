@@ -5,6 +5,7 @@
 ## 入口点
 
 **文件**: `main.py`
+
 - **函数**: `main()` → `interactive_menu()` 或 CLI 命令处理
 - **作用**: 系统主入口，提供交互式菜单和命令行接口
 
@@ -42,7 +43,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_analytical_figure1()
     ├── config/loader/loader.py
@@ -59,6 +60,7 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 141-144)
 - `config/loader/loader.py` - 加载配置
 - `config/analytical/figure1.yaml` - 配置文件
@@ -66,6 +68,7 @@ main.py
 - `analytical/formulas/formulas.py` - 公式实现
 
 **输出文件**:
+
 - `result/analytical/figure1/YYYYMMDD_HHMMSS/figure1_analysis.csv`
 
 ---
@@ -99,7 +102,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_analytical_figure2()
     ├── config/loader/loader.py
@@ -115,6 +118,7 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 147-153)
 - `config/loader/loader.py` - 加载配置
 - `config/analytical/figure1.yaml` - 配置文件
@@ -122,6 +126,7 @@ main.py
 - `analytical/figure_analysis/figure1_analysis.py` - 加载 Figure 1 数据
 
 **输出文件**:
+
 - `result/analytical/figure2/YYYYMMDD_HHMMSS/figure2_analysis.csv`
 
 ---
@@ -160,7 +165,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_analytical_figure345()
     ├── config/loader/loader.py
@@ -181,6 +186,7 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 156-159)
 - `config/loader/loader.py` - 加载配置
 - `config/analytical/figure345.yaml` - 配置文件
@@ -189,6 +195,7 @@ main.py
 - `analytical/formulas/formulas.py` - 公式实现 (Eq. 5-10)
 
 **输出文件**:
+
 - `result/analytical/figure345/YYYYMMDD_HHMMSS/figure345_analysis.csv`
 
 ---
@@ -221,7 +228,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_analytical_all()
     ├── [1] run_analytical_figure1()  [见选项 1]
@@ -233,10 +240,12 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 162-179)
 - 所有选项 1、2、3 调用的文件
 
 **输出文件**:
+
 - 选项 1、2、3 的所有输出文件
 
 ---
@@ -278,7 +287,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_simulation_figure345()
     ├── config/loader/loader.py
@@ -303,6 +312,7 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 187-190)
 - `config/loader/loader.py` - 加载配置
 - `config/simulation/figure345.yaml` - 配置文件
@@ -313,6 +323,7 @@ main.py
 - `analytical/figure_analysis/figure345_analysis.py` - 加载解析结果
 
 **输出文件**:
+
 - `result/simulation/figure345/YYYYMMDD_HHMMSS/figure345_simulation.csv`
 
 ---
@@ -347,7 +358,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_plot_figure1()
     ├── analytical/figure_analysis/figure1_analysis.py
@@ -362,12 +373,14 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 201-211)
 - `analytical/figure_analysis/figure1_analysis.py` - 加载数据
 - `plot/figure1.py` - 绘图逻辑
 - `plot/common.py` - 共用工具函数
 
 **输出文件**:
+
 - `result/graph/figure1/YYYYMMDD_HHMMSS/figure1.png`
 
 ---
@@ -399,7 +412,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_plot_figure2()
     ├── analytical/figure_analysis/figure2_analysis.py
@@ -412,11 +425,13 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 214-224)
 - `analytical/figure_analysis/figure2_analysis.py` - 加载数据
 - `plot/figure2.py` - 绘图逻辑
 
 **输出文件**:
+
 - `result/graph/figure2/YYYYMMDD_HHMMSS/figure2.png`
 
 ---
@@ -463,7 +478,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_plot_figure345()
     ├── [Figure 3]
@@ -488,12 +503,14 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 227-260)
 - `analytical/figure_analysis/figure345_analysis.py` - 加载解析数据
 - `simulation/figure_simulation/figure345_simulation.py` - 加载模拟数据
 - `plot/figure345.py` - 绘图逻辑
 
 **输出文件**:
+
 - `result/graph/figure3/YYYYMMDD_HHMMSS/figure3.png`
 - `result/graph/figure4/YYYYMMDD_HHMMSS/figure4.png`
 - `result/graph/figure5/YYYYMMDD_HHMMSS/figure5.png`
@@ -524,7 +541,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_plot_all()
     ├── run_plot_figure1(show=False)  [见选项 6]
@@ -533,10 +550,12 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 263-272)
 - 所有选项 6、7、8 调用的文件
 
 **输出文件**:
+
 - 选项 6、7、8 的所有输出文件
 
 ---
@@ -564,7 +583,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_pipeline_figure1()
     ├── [1/2] run_analytical_figure1()  [见选项 1]
@@ -572,10 +591,12 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 283-297)
 - 选项 1 和选项 6 的所有文件
 
 **输出文件**:
+
 - 选项 1 和选项 6 的所有输出文件
 
 ---
@@ -601,7 +622,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_pipeline_figure2()
     ├── [1/2] run_analytical_figure2()  [见选项 2]
@@ -609,10 +630,12 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 300-314)
 - 选项 2 和选项 7 的所有文件
 
 **输出文件**:
+
 - 选项 2 和选项 7 的所有输出文件
 
 ---
@@ -641,7 +664,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_pipeline_figure345()
     ├── [1/3] run_analytical_figure345()  [见选项 3]
@@ -650,10 +673,12 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 317-334)
 - 选项 3、5、8 的所有文件
 
 **输出文件**:
+
 - 选项 3、5、8 的所有输出文件
 
 ---
@@ -682,7 +707,7 @@ flowchart TD
 
 **文件调用树**:
 
-```
+```text
 main.py
 └── run_pipeline_all()
     ├── run_pipeline_figure1()  [见选项 10]
@@ -691,10 +716,12 @@ main.py
 ```
 
 **调用的文件**:
+
 - `main.py` (line 337-341)
 - 所有选项 10、11、12 调用的文件
 
 **输出文件**:
+
 - 所有选项 10、11、12 的输出文件
 
 ---
@@ -799,22 +826,26 @@ graph TD
 ## 模块依赖关系
 
 ### 核心模块
+
 - **config/loader/loader.py**: 所有选项都需要加载配置
 - **analytical/formulas/formulas.py**: 提供所有数学公式实现
 - **analytical/theoretical/theoretical.py**: 提供多周期理论计算
 
 ### 分析模块
+
 - **analytical/figure_analysis/figure1_analysis.py**: Figure 1 计算
 - **analytical/figure_analysis/figure2_analysis.py**: Figure 2 计算（依赖 Figure 1）
 - **analytical/figure_analysis/figure345_analysis.py**: Figure 3-5 计算
 
 ### 模拟模块
+
 - **simulation/core/one_shot_access.py**: 单次接入模拟
 - **simulation/core/group_paging.py**: 群组寻呼模拟
 - **simulation/core/metrics.py**: 性能指标计算
 - **simulation/figure_simulation/figure345_simulation.py**: 模拟协调层
 
 ### 绘图模块
+
 - **plot/common.py**: 共用绘图工具
 - **plot/figure1.py**: Figure 1 绘图
 - **plot/figure2.py**: Figure 2 绘图
