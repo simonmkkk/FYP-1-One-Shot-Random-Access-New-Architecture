@@ -1,3 +1,8 @@
+# Input: 依赖analytical模块的load_figure2_results函数获取数据，依赖common模块提取N值，依赖matplotlib绘图
+# Output: 提供plot_figure2函数，绘制Figure 2图表（近似误差分析图）
+# Position: Figure 2绘图模块，负责从CSV数据读取并绘制论文Figure 2样式的误差分析图
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 Figure 2 繪製
 

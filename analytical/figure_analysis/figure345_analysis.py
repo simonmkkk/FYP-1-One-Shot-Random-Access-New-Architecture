@@ -1,3 +1,8 @@
+# Input: 依赖theoretical模块的theoretical_calculation函数，依赖config模块加载配置
+# Output: 提供run_figure345_analysis和load_figure345_results函数，生成并加载Figure 3-5的解析数据
+# Position: Figure 3-5合并解析计算模块，同时计算P_S、T_a、P_C三个性能指标
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 Figure 3, 4, 5 合併解析數據生成
 

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# Input: 依赖config模块加载配置，依赖analytical/simulation/plot模块执行计算和绘图
+# Output: 提供CLI和交互式菜单，协调整个系统的运行流程
+# Position: 系统主入口，负责解析命令行参数、显示菜单、调用各模块功能
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 One-Shot Random Access 模擬與分析系統
 

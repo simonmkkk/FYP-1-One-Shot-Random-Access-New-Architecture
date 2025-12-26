@@ -1,7 +1,7 @@
 [project]
 name = "one-shot-random-access"
 version = "2.0.0"
-description = "One-Shot Random Access 模擬與分析系統 - 論文復現"
+description = "One-Shot Random Access"
 readme = "README.md"
 requires-python = "==3.14.*"
 dependencies = [

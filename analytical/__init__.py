@@ -1,3 +1,8 @@
+# Input: 依赖formulas和theoretical子模块提供公式和理论计算功能
+# Output: 导出所有公式函数和theoretical_calculation函数供外部使用
+# Position: 解析模型模块的导出接口，统一对外提供公式和计算功能
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 # 解析模型模組
 from .formulas import (
     paper_formula_1_pk_probability,

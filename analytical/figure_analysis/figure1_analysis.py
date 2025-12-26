@@ -1,3 +1,8 @@
+# Input: 依赖formulas模块的公式函数（Eq. 2-5），依赖config模块加载配置，使用ThreadPoolExecutor并行计算
+# Output: 提供run_figure1_analysis和load_figure1_results函数，生成并加载Figure 1的解析数据
+# Position: Figure 1解析计算模块，计算NS,1/N和NC,1/N的精确公式与近似公式结果
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 Figure 1 解析數據生成
 

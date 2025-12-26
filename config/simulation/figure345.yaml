@@ -14,7 +14,7 @@ scan:
     step: 1
 
 performance:
-  num_samples: 300000      # 樣本數量 10^7（論文要求）
+  num_samples: 10000000      # 樣本數量 10^7（論文要求）
   num_workers: -1            # 並行線程數 (-1 表示使用所有 CPU 核心)
 
 output:

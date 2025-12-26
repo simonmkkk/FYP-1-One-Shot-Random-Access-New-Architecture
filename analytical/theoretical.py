@@ -1,3 +1,8 @@
+# Input: 依赖formulas模块的公式函数（Eq. 5-10）进行多周期迭代计算
+# Output: 提供theoretical_calculation函数，计算P_S、T_a、P_C等性能指标
+# Position: 解析模型的核心计算模块，使用公式进行多周期迭代分析
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 理論計算模組
 

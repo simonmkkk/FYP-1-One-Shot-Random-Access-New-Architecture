@@ -1,3 +1,8 @@
+# Input: 依赖analytical模块的load_figure1_results函数获取数据，依赖common模块提取N值，依赖matplotlib绘图
+# Output: 提供plot_figure1函数，绘制Figure 1图表（NS,1/N和NC,1/N的精确公式与近似公式对比）
+# Position: Figure 1绘图模块，负责从CSV数据读取并绘制论文Figure 1样式的图表
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 Figure 1 繪製
 

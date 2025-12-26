@@ -1,3 +1,8 @@
+# Input: 依赖figure1_analysis模块获取Figure 1结果，依赖config模块加载配置
+# Output: 提供run_figure2_analysis和load_figure2_results函数，生成并加载Figure 2的误差分析数据
+# Position: Figure 2解析计算模块，基于Figure 1结果计算近似误差百分比
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 Figure 2 解析數據生成
 

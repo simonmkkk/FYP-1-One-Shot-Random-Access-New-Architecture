@@ -1,3 +1,8 @@
+# Input: 依赖one_shot_access模块模拟单次接入，依赖ThreadPoolExecutor实现多线程并行，依赖tqdm显示进度
+# Output: 提供simulate_group_paging_single_sample和simulate_group_paging_multi_samples函数，模拟多AC周期的群组寻呼过程
+# Position: 模拟模块的核心引擎，提供多周期模拟和多样本并行计算功能
+# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+
 """
 群組尋呼模擬模組
 
