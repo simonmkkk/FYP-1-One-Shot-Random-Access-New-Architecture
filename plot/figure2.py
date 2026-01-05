@@ -1,8 +1,3 @@
-# Input: 依赖analytical模块的load_figure2_results函数获取数据，依赖common模块提取N值，依赖matplotlib绘图
-# Output: 提供plot_figure2函数，绘制Figure 2图表（近似误差分析图）
-# Position: Figure 2绘图模块，负责从CSV数据读取并绘制论文Figure 2样式的误差分析图
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 2 繪製
 
@@ -13,6 +8,13 @@ Approximation Error - 按照論文 Figure 2 樣式
 線條樣式規則（與 Figure 1 對應）：
 - 第一個 N 值: 實線+圓圈 (N_S) / 點線+圓圈 (N_C)
 - 第二個 N 值: 實線無標記 (N_S) / 虛線無標記 (N_C)
+
+Input: Figure 2 數據 (誤差數據)
+Output: plot_figure2() 繪圖函數
+Position: Figure 2 可視化
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import matplotlib.pyplot as plt

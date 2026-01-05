@@ -1,8 +1,3 @@
-# Input: 依赖one_shot_access模块模拟单次接入，依赖ThreadPoolExecutor实现多线程并行，依赖tqdm显示进度
-# Output: 提供simulate_group_paging_single_sample和simulate_group_paging_multi_samples函数，模拟多AC周期的群组寻呼过程
-# Position: 模拟模块的核心引擎，提供多周期模拟和多样本并行计算功能
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 群組尋呼模擬模組
 
@@ -16,6 +11,13 @@ Python 3.14+ Free-threaded 優化版本
 2. Thread-local RNG (避免重複創建 Generator)
 3. 純 Python dict 計數 (對稀疏情況更高效)
 4. 預分配 numpy array (減少記憶體碎片和峰值用量)
+
+Input: M, N, I_max 參數, num_samples 樣本數
+Output: simulate_group_paging_multi_samples() 多樣本並行模擬
+Position: 蒙特卡洛模擬的核心執行引擎
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import os

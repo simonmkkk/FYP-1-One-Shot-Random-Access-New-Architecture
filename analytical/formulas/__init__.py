@@ -1,7 +1,15 @@
-# Input: 依赖formulas.py提供所有公式函数
-# Output: 导出所有公式函数供外部使用
-# Position: formulas子模块的导出接口，统一对外提供公式功能
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+"""
+論文公式模組
+
+導出論文中的所有數學公式。
+
+Input: 系統參數（M, N, k 等）
+Output: paper_formula_1 到 paper_formula_10, confidence_interval_95 等
+Position: 數學公式的統一入口
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
+"""
 
 from .formulas import (
     paper_formula_1_pk_probability,

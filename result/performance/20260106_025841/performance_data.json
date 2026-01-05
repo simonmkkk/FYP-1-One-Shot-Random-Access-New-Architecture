@@ -1,0 +1,22 @@
+{
+  "name": "Figure 3,4,5 完整流程",
+  "total_duration": 342.4670658111572,
+  "total_duration_formatted": "5m 42.5s",
+  "steps": [
+    {
+      "name": "解析計算",
+      "duration": 0.009294748306274414,
+      "duration_formatted": "9.29ms",
+      "percent": 0.0027140561047116025,
+      "children": []
+    },
+    {
+      "name": "模擬",
+      "duration": 342.4569742679596,
+      "duration_formatted": "5m 42.5s",
+      "percent": 99.99705328067861,
+      "children": []
+    }
+  ],
+  "timestamp": "2026-01-06T02:58:41.028842"
+}

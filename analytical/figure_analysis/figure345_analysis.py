@@ -1,8 +1,3 @@
-# Input: 依赖theoretical模块的theoretical_calculation函数，依赖config模块加载配置
-# Output: 提供run_figure345_analysis和load_figure345_results函数，生成并加载Figure 3-5的解析数据
-# Position: Figure 3-5合并解析计算模块，同时计算P_S、T_a、P_C三个性能指标
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 3, 4, 5 合併解析數據生成
 
@@ -13,6 +8,13 @@ Figure 3, 4, 5 合併解析數據生成
 
 這三個 Figure 使用相同的理論計算，只是提取不同的指標。
 合併執行可避免重複計算，提升效率。
+
+Input: config 配置, theoretical 理論計算模組
+Output: run_figure345_analysis(), load_figure345_results()
+Position: Figure 3, 4, 5 的解析計算核心
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import csv
@@ -21,11 +23,16 @@ from datetime import datetime
 
 from ..theoretical.theoretical import theoretical_calculation
 
+# 可選的計時器支持
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from performance import SimpleTimer
+
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure345_analysis(config: dict, save_csv: bool = True) -> dict:
+def run_figure345_analysis(config: dict, save_csv: bool = True, timer: 'SimpleTimer' = None) -> dict:
     """
     運行 Figure 3, 4, 5 合併解析計算
     

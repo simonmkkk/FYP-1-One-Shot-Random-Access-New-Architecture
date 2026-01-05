@@ -1,0 +1,212 @@
+{
+  "summary": {
+    "total_duration": 3.6370198726654053,
+    "total_duration_formatted": "3.64s",
+    "total_records": 5,
+    "unique_functions": 5,
+    "peak_memory_mb": 0.0,
+    "avg_cpu_percent": 0.0,
+    "level_durations": {
+      "function": 0,
+      "module": 0,
+      "workflow": 3.633068084716797
+    }
+  },
+  "top_by_duration": [
+    {
+      "name": "Pipeline Figure 1",
+      "total_duration": 3.633068084716797,
+      "call_count": 1,
+      "avg_duration": 3.633068084716797
+    },
+    {
+      "name": "Workflow: Plot Figure 1",
+      "total_duration": 3.611410617828369,
+      "call_count": 1,
+      "avg_duration": 3.611410617828369
+    },
+    {
+      "name": "Plot Figure 1",
+      "total_duration": 3.590237855911255,
+      "call_count": 1,
+      "avg_duration": 3.590237855911255
+    },
+    {
+      "name": "Workflow: Analytical Figure 1",
+      "total_duration": 0.020504474639892578,
+      "call_count": 1,
+      "avg_duration": 0.020504474639892578
+    },
+    {
+      "name": "Figure 1 Analysis",
+      "total_duration": 0.019011735916137695,
+      "call_count": 1,
+      "avg_duration": 0.019011735916137695
+    }
+  ],
+  "records": [
+    {
+      "name": "Figure 1 Analysis",
+      "level": "module",
+      "start_time": 1767637911.725484,
+      "end_time": 1767637911.7444956,
+      "duration": 0.019011735916137695,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Workflow: Analytical Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:31:51.725484",
+      "error": null
+    },
+    {
+      "name": "Workflow: Analytical Figure 1",
+      "level": "workflow",
+      "start_time": 1767637911.724043,
+      "end_time": 1767637911.7445474,
+      "duration": 0.020504474639892578,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Pipeline Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:31:51.724043",
+      "error": null
+    },
+    {
+      "name": "Plot Figure 1",
+      "level": "module",
+      "start_time": 1767637911.7658246,
+      "end_time": 1767637915.3560624,
+      "duration": 3.590237855911255,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Workflow: Plot Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:31:51.765826",
+      "error": null
+    },
+    {
+      "name": "Workflow: Plot Figure 1",
+      "level": "workflow",
+      "start_time": 1767637911.7446742,
+      "end_time": 1767637915.3560848,
+      "duration": 3.611410617828369,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Pipeline Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:31:51.744676",
+      "error": null
+    },
+    {
+      "name": "Pipeline Figure 1",
+      "level": "workflow",
+      "start_time": 1767637911.7236173,
+      "end_time": 1767637915.3566854,
+      "duration": 3.633068084716797,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": null,
+      "children": [],
+      "timestamp": "2026-01-06T02:31:51.723621",
+      "error": null
+    }
+  ],
+  "aggregated": {
+    "Figure 1 Analysis": {
+      "name": "Figure 1 Analysis",
+      "level": "module",
+      "call_count": 1,
+      "total_duration": 0.019011735916137695,
+      "avg_duration": 0.019011735916137695,
+      "min_duration": 0.019011735916137695,
+      "max_duration": 0.019011735916137695,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Workflow: Analytical Figure 1": {
+      "name": "Workflow: Analytical Figure 1",
+      "level": "workflow",
+      "call_count": 1,
+      "total_duration": 0.020504474639892578,
+      "avg_duration": 0.020504474639892578,
+      "min_duration": 0.020504474639892578,
+      "max_duration": 0.020504474639892578,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Plot Figure 1": {
+      "name": "Plot Figure 1",
+      "level": "module",
+      "call_count": 1,
+      "total_duration": 3.590237855911255,
+      "avg_duration": 3.590237855911255,
+      "min_duration": 3.590237855911255,
+      "max_duration": 3.590237855911255,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Workflow: Plot Figure 1": {
+      "name": "Workflow: Plot Figure 1",
+      "level": "workflow",
+      "call_count": 1,
+      "total_duration": 3.611410617828369,
+      "avg_duration": 3.611410617828369,
+      "min_duration": 3.611410617828369,
+      "max_duration": 3.611410617828369,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Pipeline Figure 1": {
+      "name": "Pipeline Figure 1",
+      "level": "workflow",
+      "call_count": 1,
+      "total_duration": 3.633068084716797,
+      "avg_duration": 3.633068084716797,
+      "min_duration": 3.633068084716797,
+      "max_duration": 3.633068084716797,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    }
+  },
+  "timestamp": "2026-01-06T02:31:55.360936"
+}

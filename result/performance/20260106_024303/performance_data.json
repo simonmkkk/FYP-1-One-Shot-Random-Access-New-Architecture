@@ -1,0 +1,33 @@
+{
+  "name": "Figure 1 完整流程",
+  "total_duration": 13.008790969848633,
+  "total_duration_formatted": "13.01s",
+  "steps": [
+    {
+      "name": "解析計算",
+      "duration": 8.41671371459961,
+      "duration_formatted": "8.42s",
+      "percent": 64.7001995351267,
+      "children": [
+        {
+          "name": "N=3 計算",
+          "duration": 0.0057659149169921875,
+          "duration_formatted": "5.77ms"
+        },
+        {
+          "name": "N=6 計算",
+          "duration": 8.406364917755127,
+          "duration_formatted": "8.41s"
+        }
+      ]
+    },
+    {
+      "name": "繪圖",
+      "duration": 4.5909881591796875,
+      "duration_formatted": "4.59s",
+      "percent": 35.29142846418653,
+      "children": []
+    }
+  ],
+  "timestamp": "2026-01-06T02:43:03.387416"
+}

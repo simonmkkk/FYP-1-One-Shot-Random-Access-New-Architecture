@@ -1,12 +1,14 @@
-# Input: 依赖formulas模块的公式函数（Eq. 5-10）进行多周期迭代计算
-# Output: 提供theoretical_calculation函数，计算P_S、T_a、P_C等性能指标
-# Position: 解析模型的核心计算模块，使用公式进行多周期迭代分析
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
-理論計算模組
+理論計算核心實現
 
-使用論文公式計算系統性能指標
+使用論文公式迭代計算 P_S、T_a、P_C 等性能指標。
+
+Input: M（設備數）, N（RAO 數）, I_max（最大 AC 數）
+Output: theoretical_calculation() 返回完整性能指標
+Position: 解析計算的數學引擎
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import numpy as np

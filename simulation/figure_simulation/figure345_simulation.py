@@ -1,8 +1,3 @@
-# Input: 依赖core模块的group_paging和metrics函数，依赖analytical模块加载解析结果，依赖config模块加载配置
-# Output: 提供run_figure345_simulation和load_figure345_simulation_results函数，生成并加载Figure 3-5的模拟数据和误差
-# Position: Figure 3-5合并模拟模块，同时计算P_S、T_a、P_C并计算与解析结果的误差
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 3, 4, 5 合併模擬
 
@@ -18,6 +13,13 @@ Figure 3, 4, 5 合併模擬
 根據論文定義: Error = |Approximation - Simulation| / |Approximation| * 100%
 
 記憶體優化：每次 N 迴圈後強制 gc，避免記憶體累積。
+
+Input: config 配置, group_paging 模擬引擎, metrics 指標計算
+Output: run_figure345_simulation(), load_figure345_simulation_results()
+Position: Figure 3, 4, 5 的蒙特卡洛模擬核心
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import gc
@@ -28,6 +30,11 @@ from datetime import datetime
 from ..core.group_paging import simulate_group_paging_multi_samples, clear_thread_local_rng
 from ..core.metrics import calculate_performance_metrics
 from analytical.figure_analysis import load_figure345_results
+
+# 可選的計時器支持
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from performance import SimpleTimer
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -56,7 +63,7 @@ def calculate_approximation_error(approximation_value: float, simulation_value: 
         return abs(simulation_value) * 100 if simulation_value != 0 else 0.0
 
 
-def run_figure345_simulation(config: dict) -> dict:
+def run_figure345_simulation(config: dict, timer: 'SimpleTimer' = None) -> dict:
     """
     運行 Figure 3, 4, 5 合併模擬
     

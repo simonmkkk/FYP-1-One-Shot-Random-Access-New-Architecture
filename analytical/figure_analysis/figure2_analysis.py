@@ -1,8 +1,3 @@
-# Input: 依赖figure1_analysis模块获取Figure 1结果，依赖config模块加载配置
-# Output: 提供run_figure2_analysis和load_figure2_results函数，生成并加载Figure 2的误差分析数据
-# Position: Figure 2解析计算模块，基于Figure 1结果计算近似误差百分比
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 2 解析數據生成
 
@@ -10,6 +5,13 @@ Figure 2 解析數據生成
 誤差 = |Analytical - Approximation| / |Analytical| * 100%
 
 Note: Figure 2 直接使用 Figure 1 的計算結果，避免重複運算。
+
+Input: Figure 1 數據
+Output: run_figure2_analysis(), load_figure2_results()
+Position: Figure 2 的誤差分析核心
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import csv
@@ -17,11 +19,16 @@ from pathlib import Path
 from datetime import datetime
 from .figure1_analysis import run_figure1_analysis, load_figure1_results
 
+# 可選的計時器支持
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from performance import SimpleTimer
+
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = None) -> dict:
+def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = None, timer: 'SimpleTimer' = None) -> dict:
     """
     運行 Figure 2 解析計算（基於 Figure 1 數據）
     

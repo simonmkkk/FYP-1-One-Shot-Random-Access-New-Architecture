@@ -1,14 +1,16 @@
-# Input: 依赖analytical和simulation模块加载解析和模拟数据，依赖matplotlib绘图
-# Output: 提供plot_figure3、plot_figure4、plot_figure5函数，绘制Figure 3-5图表（理论曲线、模拟结果和误差曲线）
-# Position: Figure 3-5绘图模块，负责绘制P_S、T_a、P_C的理论曲线、模拟点和误差曲线
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 3, 4, 5 合併繪製模組
 
 - Figure 3: Access Success Probability (P_S) vs N
 - Figure 4: Mean Access Delay (T_a) vs N
 - Figure 5: Collision Probability (P_C) vs N
+
+Input: Figure 345 analytical/simulation 數據
+Output: plot_figure3/4/5() 繪圖函數
+Position: Figure 3, 4, 5 可視化
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import matplotlib.pyplot as plt
