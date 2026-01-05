@@ -1,0 +1,192 @@
+{
+  "summary": {
+    "total_duration": 12.037693738937378,
+    "total_duration_formatted": "12.04s",
+    "total_records": 5,
+    "unique_functions": 4,
+    "peak_memory_mb": 0.0,
+    "avg_cpu_percent": 0.0,
+    "level_durations": {
+      "function": 0,
+      "module": 12.017591953277588,
+      "workflow": 24.04724884033203
+    }
+  },
+  "top_by_duration": [
+    {
+      "name": "Pipeline Figure 1",
+      "total_duration": 12.024273872375488,
+      "call_count": 1,
+      "avg_duration": 12.024273872375488
+    },
+    {
+      "name": "Analytical Figure 1",
+      "total_duration": 8.261712312698364,
+      "call_count": 1,
+      "avg_duration": 8.261712312698364
+    },
+    {
+      "name": "Figure 1 Analysis",
+      "total_duration": 8.260401487350464,
+      "call_count": 1,
+      "avg_duration": 8.260401487350464
+    },
+    {
+      "name": "Plot Figure 1",
+      "total_duration": 7.518453121185303,
+      "call_count": 2,
+      "avg_duration": 3.7592265605926514
+    }
+  ],
+  "records": [
+    {
+      "name": "Figure 1 Analysis",
+      "level": "module",
+      "start_time": 1767637258.8929114,
+      "end_time": 1767637267.153313,
+      "duration": 8.260401487350464,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Analytical Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:20:58.892912",
+      "error": null
+    },
+    {
+      "name": "Analytical Figure 1",
+      "level": "workflow",
+      "start_time": 1767637258.8916538,
+      "end_time": 1767637267.153366,
+      "duration": 8.261712312698364,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Pipeline Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:20:58.891655",
+      "error": null
+    },
+    {
+      "name": "Plot Figure 1",
+      "level": "module",
+      "start_time": 1767637267.1580768,
+      "end_time": 1767637270.9152672,
+      "duration": 3.757190465927124,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Plot Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:21:07.158077",
+      "error": null
+    },
+    {
+      "name": "Plot Figure 1",
+      "level": "workflow",
+      "start_time": 1767637267.154023,
+      "end_time": 1767637270.9152856,
+      "duration": 3.7612626552581787,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": "Pipeline Figure 1",
+      "children": [],
+      "timestamp": "2026-01-06T02:21:07.154024",
+      "error": null
+    },
+    {
+      "name": "Pipeline Figure 1",
+      "level": "workflow",
+      "start_time": 1767637258.8912988,
+      "end_time": 1767637270.9155726,
+      "duration": 12.024273872375488,
+      "memory_start": 0.0,
+      "memory_end": 0.0,
+      "memory_peak": 0.0,
+      "memory_delta": 0.0,
+      "cpu_percent_avg": 0.0,
+      "cpu_percent_peak": 0.0,
+      "call_count": 1,
+      "parent_name": null,
+      "children": [],
+      "timestamp": "2026-01-06T02:20:58.891300",
+      "error": null
+    }
+  ],
+  "aggregated": {
+    "Figure 1 Analysis": {
+      "name": "Figure 1 Analysis",
+      "level": "module",
+      "call_count": 1,
+      "total_duration": 8.260401487350464,
+      "avg_duration": 8.260401487350464,
+      "min_duration": 8.260401487350464,
+      "max_duration": 8.260401487350464,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Analytical Figure 1": {
+      "name": "Analytical Figure 1",
+      "level": "workflow",
+      "call_count": 1,
+      "total_duration": 8.261712312698364,
+      "avg_duration": 8.261712312698364,
+      "min_duration": 8.261712312698364,
+      "max_duration": 8.261712312698364,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Plot Figure 1": {
+      "name": "Plot Figure 1",
+      "level": "module",
+      "call_count": 2,
+      "total_duration": 7.518453121185303,
+      "avg_duration": 3.7592265605926514,
+      "min_duration": 3.757190465927124,
+      "max_duration": 3.7612626552581787,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    },
+    "Pipeline Figure 1": {
+      "name": "Pipeline Figure 1",
+      "level": "workflow",
+      "call_count": 1,
+      "total_duration": 12.024273872375488,
+      "avg_duration": 12.024273872375488,
+      "min_duration": 12.024273872375488,
+      "max_duration": 12.024273872375488,
+      "total_memory_delta": 0.0,
+      "peak_memory": 0.0,
+      "avg_cpu": 0.0,
+      "peak_cpu": 0.0,
+      "errors": 0
+    }
+  },
+  "timestamp": "2026-01-06T02:21:10.929942"
+}

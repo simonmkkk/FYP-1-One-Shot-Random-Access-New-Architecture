@@ -1,12 +1,14 @@
-# Input: 依赖formulas模块的公式函数（Eq. 2-5），依赖config模块加载配置，使用ThreadPoolExecutor并行计算
-# Output: 提供run_figure1_analysis和load_figure1_results函数，生成并加载Figure 1的解析数据
-# Position: Figure 1解析计算模块，计算NS,1/N和NC,1/N的精确公式与近似公式结果
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 1 解析數據生成
 
 NS,1/N & NC,1/N vs M/N - 分析模型 vs 近似公式
+
+Input: config 配置, formulas 公式模組
+Output: run_figure1_analysis(), load_figure1_results()
+Position: Figure 1 的解析計算核心
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import csv
@@ -21,6 +23,10 @@ from ..formulas.formulas import (
     paper_formula_4_success_approx,
     paper_formula_5_collision_approx,
 )
+# 可選的計時器支持
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from performance import SimpleTimer
 
 
 def _get_actual_n_jobs(n_jobs: int) -> int:
@@ -105,13 +111,14 @@ def compute_single_point(M, N):
             N_S_approx/N if N > 0 else 0, N_C_approx/N if N > 0 else 0, elapsed)
 
 
-def run_figure1_analysis(config: dict, save_csv: bool = True) -> dict:
+def run_figure1_analysis(config: dict, save_csv: bool = True, timer: 'SimpleTimer' = None) -> dict:
     """
     運行 Figure 1 解析計算
     
     Args:
         config: 配置字典
         save_csv: 是否保存結果到 CSV
+        timer: 可選的計時器（用於記錄各 N 值的計算時間）
     
     Returns:
         結果字典
@@ -139,11 +146,19 @@ def run_figure1_analysis(config: dict, save_csv: bool = True) -> dict:
         M_range = list(range(m_start, m_over_n_max * N + 1))
         print(f"  M 範圍: {m_start} 到 {m_over_n_max * N}，共 {len(M_range)} 個數據點")
         
+        # 記錄每個 N 的計算時間
+        n_start_time = time.time()
+        
         args_list = [(M, N) for M in M_range]
         results_list = _parallel_compute(
             compute_single_point, args_list, n_jobs, 
             f"計算 N={N}"
         )
+        
+        # 記錄到計時器
+        n_elapsed = time.time() - n_start_time
+        if timer:
+            timer.record(f"N={N} 計算", n_elapsed)
         
         M_values = [r[0] for r in results_list]
         analytical_N_S = [r[1] for r in results_list]

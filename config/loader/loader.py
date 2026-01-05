@@ -1,10 +1,14 @@
-# Input: 依赖yaml模块解析YAML文件，依赖pathlib处理文件路径
-# Output: 提供load_config、get_config_path、list_available_configs等配置加载函数
-# Position: 配置管理核心模块，为系统提供统一的配置加载接口
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
-配置加載器模組
+配置加載器核心實現
+
+讀取和解析 YAML 配置文件，支持多種配置類型。
+
+Input: config_type（analytical/simulation）, config_name
+Output: load_config() 返回配置字典, list_available_configs() 列出可用配置
+Position: 配置系統的底層實現
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import os

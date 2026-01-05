@@ -1,12 +1,14 @@
-# Input: 依赖numpy生成随机数和进行数组操作
-# Output: 提供simulate_one_shot_access_single_sample函数，模拟单次AC周期的接入过程
-# Position: 模拟模块的基础单元，提供单次接入的底层模拟功能
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 單次隨機接入模擬模組
 
-模擬一次 One-Shot Random Access（單個 AC）
+模擬一次 One-Shot Random Access（單個 AC）。
+
+Input: M（設備數）, N（RAO 數）
+Output: simulate_one_shot_access_single_sample() 返回 (success, collision, idle)
+Position: 最底層的單次接入模擬
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import numpy as np

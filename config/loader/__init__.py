@@ -1,7 +1,15 @@
-# Input: 依赖loader.py提供所有配置加载函数
-# Output: 导出所有配置加载函数供外部使用
-# Position: loader子模块的导出接口，统一对外提供配置加载功能
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+"""
+配置加載器子模組
+
+提供配置文件的讀取、保存和路徑管理。
+
+Input: YAML 配置文件路徑
+Output: load_config(), save_config(), get_config_path() 等
+Position: 配置模組的核心實現
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
+"""
 
 from .loader import (
     load_config,

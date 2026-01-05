@@ -1,9 +1,16 @@
-# Input: 依赖one_shot_access、group_paging、metrics子模块提供核心模拟功能
-# Output: 导出所有核心模拟函数供外部使用
-# Position: 核心模拟引擎子模块的导出接口，统一对外提供底层模拟功能
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
+"""
+核心模擬模組
 
-# 核心模擬模組
+提供底層模擬引擎和性能指標計算。
+
+Input: M, N, I_max, num_samples 參數
+Output: simulate_one_shot_access_single_sample(), simulate_group_paging_multi_samples()
+Position: 模擬系統的核心引擎
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
+"""
+
 from .one_shot_access import simulate_one_shot_access_single_sample
 from .group_paging import (
     simulate_group_paging_single_sample,

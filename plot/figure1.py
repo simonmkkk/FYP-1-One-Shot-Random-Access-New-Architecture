@@ -1,8 +1,3 @@
-# Input: 依赖analytical模块的load_figure1_results函数获取数据，依赖common模块提取N值，依赖matplotlib绘图
-# Output: 提供plot_figure1函数，绘制Figure 1图表（NS,1/N和NC,1/N的精确公式与近似公式对比）
-# Position: Figure 1绘图模块，负责从CSV数据读取并绘制论文Figure 1样式的图表
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 Figure 1 繪製
 
@@ -15,6 +10,13 @@ NS,1/N & NC,1/N vs M/N
 - Approximation: 細點線 (N_S, Eq.4) / 點劃線 (N_C, Eq.5)
 
 佈局：上面三個子圖，下面一個合併圖
+
+Input: Figure 1 數據 (analytical 或 simulation)
+Output: plot_figure1() 繪圖函數
+Position: Figure 1 可視化
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import matplotlib.pyplot as plt

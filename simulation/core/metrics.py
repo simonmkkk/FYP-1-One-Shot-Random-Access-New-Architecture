@@ -1,10 +1,14 @@
-# Input: 依赖numpy进行统计计算（均值、标准差、置信区间）
-# Output: 提供calculate_performance_metrics和confidence_interval_95函数，计算P_S、T_a、P_C的均值和置信区间
-# Position: 模拟模块的指标计算模块，将模拟结果转换为性能指标
-# 一旦我被更新，务必更新我的开头注释，以及所属文件夹的md。
-
 """
 性能指標計算模組
+
+計算模擬結果的統計指標和置信區間。
+
+Input: 模擬結果數組 [num_samples, 3]
+Output: calculate_performance_metrics() 返回均值和 95% 置信區間
+Position: 模擬結果的統計處理
+
+注意：一旦此文件被更新，請同步更新：
+- 項目根目錄 README.md
 """
 
 import numpy as np

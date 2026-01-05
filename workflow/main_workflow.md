@@ -853,9 +853,64 @@ graph TD
 
 ---
 
+## 性能监测模块
+
+### 性能监测流程
+
+系统内置性能监测功能，使用 `--performance` 参数启用：
+
+```bash
+uv run python main.py run figure1 --performance
+```
+
+### 性能监测执行流程图
+
+```mermaid
+flowchart TD
+    Start([启用 --performance 参数]) --> StartMonitor[start_monitoring]
+    StartMonitor --> ResetCollector[重置数据收集器]
+    ResetCollector --> ExecuteTask[执行任务]
+    
+    ExecuteTask --> Decorator{函数有装饰器?}
+    Decorator -->|是| RecordStart[记录开始时间/内存]
+    RecordStart --> ExecuteFunc[执行函数]
+    ExecuteFunc --> RecordEnd[记录结束时间/内存/CPU]
+    RecordEnd --> SaveRecord[保存性能记录]
+    SaveRecord --> NextFunc{还有函数?}
+    NextFunc -->|是| Decorator
+    NextFunc -->|否| StopMonitor
+    
+    Decorator -->|否| NextFunc
+    
+    StopMonitor[stop_monitoring] --> Aggregate[聚合性能数据]
+    Aggregate --> PrintSummary[print_summary 控制台摘要]
+    PrintSummary --> GenerateReport[generate_performance_report]
+    GenerateReport --> SaveJSON[保存 JSON 数据]
+    SaveJSON --> End([完成])
+    
+    style Start fill:#e1f5ff
+    style End fill:#c8e6c9
+    style StopMonitor fill:#fff9c4
+    style GenerateReport fill:#ffccbc
+```
+
+### 性能监测模块文件
+
+- **performance/performance_monitor.py**: 核心装饰器和数据收集器
+- **performance/performance_report.py**: HTML 报告生成器
+- **config/performance/performance.yaml**: 性能监测配置
+
+### 输出文件
+
+- 控制台详细报告（Top 10 耗时函数、统计表格等）
+- `result/performance/{timestamp}/performance_data.json` - JSON 原始数据
+
+---
+
 ## 注意事项
 
 1. **Figure 2 依赖 Figure 1**: 选项 2 需要先运行选项 1，或使用选项 4 自动处理依赖
 2. **Figure 3-5 模拟需要解析结果**: 选项 5 会尝试加载解析结果计算误差，如果不存在会警告但不影响模拟
 3. **绘图选项需要数据**: 选项 6-9 需要先运行对应的解析或模拟选项生成数据
 4. **完整流程选项**: 选项 10-13 会自动处理依赖关系，按正确顺序执行
+5. **性能监测**: 使用 `--performance` 参数启用性能监测，会自动生成 HTML 报告和 JSON 数据
