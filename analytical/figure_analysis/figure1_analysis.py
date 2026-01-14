@@ -16,7 +16,7 @@ import os
 import time
 from pathlib import Path
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from ..formulas.formulas import (
     paper_formula_2_collision_raos_exact,
     paper_formula_3_success_raos_exact,
@@ -40,11 +40,10 @@ def _parallel_compute(func, args_list, n_jobs: int, desc: str = "計算中"):
     """
     並行計算輔助函數
     
-    使用 ThreadPoolExecutor 實現多執行緒並行計算，
-    在 Python 3.14 free-threaded 版本下無 GIL 限制，可充分利用多核 CPU。
+    使用 ProcessPoolExecutor 實現多進程並行計算，可充分利用多核 CPU。
     
     Args:
-        func: 計算函數
+        func: 計算函數（必須是頂層函數，可被 pickle）
         args_list: 參數列表，每個元素是傳給 func 的參數元組
         n_jobs: 並行數 (-1 表示使用所有 CPU 核心)
         desc: 描述
@@ -54,15 +53,15 @@ def _parallel_compute(func, args_list, n_jobs: int, desc: str = "計算中"):
     """
     actual_n_jobs = _get_actual_n_jobs(n_jobs)
     total_tasks = len(args_list)
-    print(f"  {desc}... (使用 {actual_n_jobs} 個執行緒, 共 {total_tasks} 個任務)")
+    print(f"  {desc}... (使用 {actual_n_jobs} 個進程, 共 {total_tasks} 個任務)")
     
     start_time = time.time()
     
-    # 使用 ThreadPoolExecutor 進行多執行緒並行
+    # 使用 ProcessPoolExecutor 進行多進程並行
     results = [None] * total_tasks
     completed = 0
     
-    with ThreadPoolExecutor(max_workers=actual_n_jobs) as executor:
+    with ProcessPoolExecutor(max_workers=actual_n_jobs) as executor:
         # 提交所有任務，保存 future 到索引的映射
         future_to_idx = {
             executor.submit(func, *args): idx 

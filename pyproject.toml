@@ -3,7 +3,7 @@ name = "one-shot-random-access"
 version = "2.0.0"
 description = "One-Shot Random Access"
 readme = "README.md"
-requires-python = "==3.14.*"
+requires-python = "==3.13.9"
 dependencies = [
     "numpy==2.3.5",
     "matplotlib==3.10.7",

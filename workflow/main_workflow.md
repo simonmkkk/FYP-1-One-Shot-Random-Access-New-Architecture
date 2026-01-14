@@ -264,8 +264,8 @@ flowchart TD
     ReadYAML --> RunSim[simulation/figure_simulation/figure345_simulation.py: run_figure345_simulation]
     RunSim --> LoopN[循环每个 N 值]
     LoopN --> GroupPaging[simulation/core/group_paging.py: simulate_group_paging_multi_samples]
-    GroupPaging --> Parallel[ThreadPoolExecutor 多线程并行]
-    Parallel --> OneShot[simulation/core/one_shot_access.py: simulate_one_shot_access_single_sample]
+    GroupPaging --> Parallel[ProcessPoolExecutor 多进程并行]
+    Parallel --> OneShot[simulation/core/one_shot_access.py: simulate_one_shot_access_single_ac]
     OneShot --> RandomNum[numpy.random 生成随机数]
     RandomNum --> Parallel
     Parallel --> Metrics[simulation/core/metrics.py: calculate_performance_metrics]
@@ -297,9 +297,9 @@ main.py
         └── run_figure345_simulation(config)
             ├── simulation/core/group_paging.py
             │   └── simulate_group_paging_multi_samples(M, N, I_max, num_samples, num_workers)
-            │       ├── ThreadPoolExecutor 多线程并行执行
+            │       ├── ProcessPoolExecutor 多进程并行执行
             │       └── simulation/core/one_shot_access.py
-            │           └── simulate_one_shot_access_single_sample()
+            │           └── simulate_one_shot_access_single_ac()
             │               └── numpy.random 生成随机数
             ├── simulation/core/metrics.py
             │   └── calculate_performance_metrics(results_array)
