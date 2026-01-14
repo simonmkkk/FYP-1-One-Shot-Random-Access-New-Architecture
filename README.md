@@ -230,19 +230,19 @@ graph TB
 
 ### Step 1: 環境要求
 
-| 要求         | 版本                    | 說明                                                   |
-| ------------ | ----------------------- | ------------------------------------------------------ |
-| **Python**   | 3.13.9                  | 使用 uv 會自動安裝正確版本                             |
-| **包管理器** | uv (推薦) 或 pip        | uv 更快更現代                                          |
-| **操作系統** | Windows / macOS / Linux | 全平台支持                                             |
+| 要求         | 版本                    | 說明                       |
+| ------------ | ----------------------- | -------------------------- |
+| **Python**   | 3.13.9                  | 使用 uv 會自動安裝正確版本 |
+| **包管理器** | uv (推薦) 或 pip        | uv 更快更現代              |
+| **操作系統** | Windows / macOS / Linux | 全平台支持                 |
 
 #### 關於 Python 版本
 
-本專案使用 Python 3.13.9。模擬模組使用 `ProcessPoolExecutor` 進行多進程並行計算，可實現：
+本專案使用 Python 3.13.9。模擬模組使用 `ProcessPoolExecutor` 進行多進程並行計算，配合 **Batch Optimization** 策略，可實現：
 
-- 🚀 多核並行計算
-- ⏱️ 高吞吐量的蒙特卡洛模擬
-- 💪 10^7 樣本可在合理時間內完成
+- 🚀 多核並行計算（使用 Batch 分塊策略減少 IPC 開銷）
+- ⏱️ 高吞吐量的蒙特卡洛模擬（~40,000 樣本/秒）
+- 💪 10^7 樣本約 4 分鐘完成
 
 ### Step 2: 安裝依賴
 
@@ -405,9 +405,9 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 │   │
 │   ├── core/                     #    核心模擬引擎
 │   │   ├── __init__.py
-│   │   ├── one_shot_access.py    #    單次接入模擬 (29 行)
-│   │   ├── group_paging.py       #    群組尋呼模擬 (259 行)
-│   │   ├── metrics.py            #    性能指標計算 (39 行)
+│   │   ├── one_shot_access.py    #    單次接入模擬 (含 RNG 優化版本)
+│   │   ├── group_paging.py       #    群組尋呼模擬 (Batch Optimization)
+│   │   ├── metrics.py            #    性能指標計算
 │   │   └── README.md
 │   │
 │   └── figure_simulation/        #    圖表模擬
@@ -479,12 +479,14 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 
 #### 3. simulation/ 模組
 
-| 文件                                        | 功能                              | 輸入          | 輸出                     |
-| ------------------------------------------- | --------------------------------- | ------------- | ------------------------ |
-| `core/one_shot_access.py`                   | 單 AC 模擬                        | M, N          | success, collision, idle |
-| `core/group_paging.py`                      | 多 AC 群組尋呼模擬（多進程多樣本） | M, N, I_max   | P_S, T_a, P_C            |
-| `core/metrics.py`                           | 統計計算                          | results_array | mean, CI                 |
-| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬                   | config        | CSV 文件                 |
+| 文件                                        | 功能                                   | 輸入          | 輸出                     |
+| ------------------------------------------- | -------------------------------------- | ------------- | ------------------------ |
+| `core/one_shot_access.py`                   | 單 AC 模擬 (含 RNG 優化版本)           | M, N, (rng)   | success, collision, idle |
+| `core/group_paging.py`                      | 群組尋呼模擬（**Batch Optimization**） | M, N, I_max   | P_S, T_a, P_C            |
+| `core/metrics.py`                           | 統計計算                               | results_array | mean, CI                 |
+| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬                        | config        | CSV 文件                 |
+
+> **⚡ Batch Optimization**: 使用分塊處理策略大幅減少 IPC 開銷，10^7 樣本約 4 分鐘完成（~40,000 樣本/秒）
 
 #### 4. plot/ 模組
 
