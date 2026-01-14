@@ -11,8 +11,8 @@ Position: 模擬系統的核心引擎
 - 項目根目錄 README.md
 """
 
-from .one_shot_access import simulate_one_shot_access_single_ac
-from .group_paging import (
+from .one_shot_access import (
+    simulate_one_shot_access_single_ac,
     simulate_group_paging_single_sample,
     simulate_group_paging_multi_samples,
 )

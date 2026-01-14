@@ -405,8 +405,7 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 │   │
 │   ├── core/                     #    核心模擬引擎
 │   │   ├── __init__.py
-│   │   ├── one_shot_access.py    #    單次接入模擬 (含 RNG 優化版本)
-│   │   ├── group_paging.py       #    群組尋呼模擬 (Batch Optimization)
+│   │   ├── one_shot_access.py    #    所有模擬函數 (Batch Optimization)
 │   │   ├── metrics.py            #    性能指標計算
 │   │   └── README.md
 │   │
@@ -479,12 +478,11 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 
 #### 3. simulation/ 模組
 
-| 文件                                        | 功能                                   | 輸入          | 輸出                     |
-| ------------------------------------------- | -------------------------------------- | ------------- | ------------------------ |
-| `core/one_shot_access.py`                   | 單 AC 模擬 (含 RNG 優化版本)           | M, N, (rng)   | success, collision, idle |
-| `core/group_paging.py`                      | 群組尋呼模擬（**Batch Optimization**） | M, N, I_max   | P_S, T_a, P_C            |
-| `core/metrics.py`                           | 統計計算                               | results_array | mean, CI                 |
-| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬                        | config        | CSV 文件                 |
+| 文件                                        | 功能                                  | 輸入          | 輸出          |
+| ------------------------------------------- | ------------------------------------- | ------------- | ------------- |
+| `core/one_shot_access.py`                   | 所有模擬函數（單 AC / 單樣本 / 批量） | M, N, I_max   | P_S, T_a, P_C |
+| `core/metrics.py`                           | 統計計算                              | results_array | mean, CI      |
+| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬                       | config        | CSV 文件      |
 
 > **⚡ Batch Optimization**: 使用分塊處理策略大幅減少 IPC 開銷，10^7 樣本約 4 分鐘完成（~40,000 樣本/秒）
 
