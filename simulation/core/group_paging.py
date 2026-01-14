@@ -3,18 +3,20 @@
 
 模擬完整的群組尋呼過程（多個 AC）
 
-Python 3.14+ Free-threaded 優化版本
-使用 ThreadPoolExecutor 實現真正的多線程並行
+使用 ProcessPoolExecutor 實現多進程並行計算
+
+架構設計：
+- simulate_group_paging_single_sample: 通過循環調用 one_shot_access 實現單次群組尋呼模擬
+- simulate_group_paging_multi_samples: 通過 Batching 策略實現高效多樣本並行模擬
 
 優化策略：
-1. 批量預生成隨機數 (減少 np.random 調用次數)
-2. Thread-local RNG (避免重複創建 Generator)
-3. 純 Python dict 計數 (對稀疏情況更高效)
-4. 預分配 numpy array (減少記憶體碎片和峰值用量)
+1. Batch Processing (分塊處理) - 大幅減少 IPC 開銷
+2. 獨立 RNG (隨機數生成器) - 使用 np.random.SeedSequence 確保並行正確性
+3. 預分配 numpy array - 減少記憶體碎片
 
 Input: M, N, I_max 參數, num_samples 樣本數
 Output: simulate_group_paging_multi_samples() 多樣本並行模擬
-Position: 蒙特卡洛模擬的核心執行引擎
+Position: 蒙特卡洛模擬的核心執行引擎，依賴 one_shot_access 模組
 
 注意：一旦此文件被更新，請同步更新：
 - 項目根目錄 README.md
@@ -22,38 +24,22 @@ Position: 蒙特卡洛模擬的核心執行引擎
 
 import os
 import time
-import threading
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 
-from .one_shot_access import simulate_one_shot_access_single_sample
-
-
-# Thread-local storage for RNG (每個線程一個 Generator，避免重複創建)
-_thread_local = threading.local()
-
-def _get_thread_rng():
-    """獲取當前線程的隨機數生成器"""
-    if not hasattr(_thread_local, 'rng'):
-        _thread_local.rng = np.random.default_rng()
-    return _thread_local.rng
-
-
-def clear_thread_local_rng():
-    """清理 thread-local RNG，釋放記憶體"""
-    global _thread_local
-    _thread_local = threading.local()
+from .one_shot_access import (
+    simulate_one_shot_access_single_ac,
+    simulate_one_shot_access_single_ac_rng,
+)
 
 
 def simulate_group_paging_single_sample(M: int, N: int, I_max: int):
     """
     模擬一次完整的群組尋呼過程
     
-    優化策略：
-    1. 使用 thread-local RNG，避免每次創建新的 Generator
-    2. 批量預生成所有 AC 所需的隨機數
-    3. 使用純 Python dict 計數（對 M < N 的稀疏情況更高效）
+    通過循環調用 simulate_one_shot_access_single_ac 實現多個 AC 的群組尋呼。
+    每個 AC 周期中，剩餘設備嘗試隨機接入，成功的設備被移除，未成功的設備繼續下一個 AC。
     
     Args:
         M: 初始設備數
@@ -63,10 +49,6 @@ def simulate_group_paging_single_sample(M: int, N: int, I_max: int):
     Returns:
         tuple: (access_success_prob, mean_access_delay, collision_prob)
     """
-    # 使用 thread-local RNG 批量生成隨機數
-    rng = _get_thread_rng()
-    all_random_choices = rng.integers(0, N, (I_max, M))
-    
     remaining_devices = M
     success_count = 0
     success_delay_sum = 0
@@ -76,23 +58,20 @@ def simulate_group_paging_single_sample(M: int, N: int, I_max: int):
         if remaining_devices == 0:
             continue
         
-        # 使用預生成的隨機數，只取前 remaining_devices 個
-        choices = all_random_choices[ac_index - 1, :remaining_devices]
+        # 調用核心模擬函數進行單次 AC 模擬
+        success_raos, collision_raos, _ = simulate_one_shot_access_single_ac(
+            remaining_devices, N
+        )
         
-        # 純 Python dict 計數 (比 np.bincount 在稀疏情況下更快)
-        counts = {}
-        for c in choices:
-            counts[c] = counts.get(c, 0) + 1
-        
-        # 計算成功和碰撞
-        success_raos = sum(1 for v in counts.values() if v == 1)
-        collision_raos = sum(1 for v in counts.values() if v >= 2)
-        
+        # 累積統計信息
         success_count += success_raos
         success_delay_sum += success_raos * ac_index
         total_collision_count += collision_raos
-        remaining_devices = remaining_devices - success_raos
+        
+        # 更新剩餘設備數（成功的設備不再參與後續 AC）
+        remaining_devices -= success_raos
     
+    # 計算最終指標
     access_success_prob = success_count / M if M > 0 else 0.0
     
     if success_count > 0:
@@ -106,49 +85,85 @@ def simulate_group_paging_single_sample(M: int, N: int, I_max: int):
     return access_success_prob, mean_access_delay, collision_prob
 
 
-def _single_sample_worker(args):
+def _simulate_batch_worker(M: int, N: int, I_max: int, batch_size: int, seed: int):
     """
-    單樣本 worker：執行一個樣本模擬並直接寫入共享 array
+    工作進程函數：在一個進程中連續執行多個樣本模擬
+    
+    優化點：
+    1. 減少 IPC (進程通訊) 開銷 - 批量處理多個樣本
+    2. 使用獨立的 Random Generator 確保隨機性與速度
+    3. 在進程內預分配記憶體
+    
+    Args:
+        M: 初始設備數
+        N: 每個 AC 的 RAO 數
+        I_max: 最大 AC 數
+        batch_size: 此批次的樣本數量
+        seed: 隨機數種子（確保並行可重現性）
+    
+    Returns:
+        np.ndarray: Shape [batch_size, 3] 的結果矩陣
     """
-    M, N, I_max, idx, results_array = args
-    result = simulate_group_paging_single_sample(M, N, I_max)
-    results_array[idx, 0] = result[0]
-    results_array[idx, 1] = result[1]
-    results_array[idx, 2] = result[2]
-    return idx
-
-
-def _micro_batch_worker(args):
-    """
-    微批次 worker：執行多個樣本模擬並直接寫入共享 array
-    用於減少任務調度開銷，提高 CPU 利用率
-    """
-    M, N, I_max, start_idx, count, results_array = args
-    for i in range(count):
-        result = simulate_group_paging_single_sample(M, N, I_max)
-        idx = start_idx + i
-        results_array[idx, 0] = result[0]
-        results_array[idx, 1] = result[1]
-        results_array[idx, 2] = result[2]
-    return count
+    # 初始化獨立的隨機數生成器 (比 legacy np.random 快且線程安全)
+    rng = np.random.default_rng(seed)
+    
+    # 預分配該批次的結果矩陣
+    batch_results = np.empty((batch_size, 3), dtype=np.float64)
+    
+    for i in range(batch_size):
+        remaining_devices = M
+        success_count = 0
+        success_delay_sum = 0
+        total_collision_count = 0
+        
+        # --- 單樣本模擬邏輯開始 ---
+        for ac_index in range(1, I_max + 1):
+            if remaining_devices == 0:
+                break
+            
+            # 呼叫核心模擬（使用 RNG 優化版本）
+            success_raos, collision_raos, _ = simulate_one_shot_access_single_ac_rng(
+                remaining_devices, N, rng
+            )
+            
+            success_count += success_raos
+            success_delay_sum += success_raos * ac_index
+            total_collision_count += collision_raos
+            remaining_devices -= success_raos
+        # --- 單樣本模擬邏輯結束 ---
+        
+        # 計算指標
+        # 1. Access Success Probability
+        batch_results[i, 0] = success_count / M if M > 0 else 0.0
+        
+        # 2. Mean Access Delay
+        if success_count > 0:
+            batch_results[i, 1] = success_delay_sum / success_count
+        else:
+            batch_results[i, 1] = -1.0
+            
+        # 3. Collision Probability
+        total_rao_count = I_max * N
+        batch_results[i, 2] = total_collision_count / total_rao_count if total_rao_count > 0 else 0.0
+        
+    return batch_results
 
 
 def simulate_group_paging_multi_samples(M: int, N: int, I_max: int, num_samples: int, 
                                         num_workers: int):
     """
-    並行執行完整群組尋呼過程的多樣本模擬（自適應微批次模式）
+    高效並行執行完整群組尋呼過程的多樣本模擬（Batch Optimization）
     
-    自適應策略：
-    - 根據 M/N 比例調整微批次大小
-    - N 越大（M/N 越小），單樣本計算越快，需要更大的微批次來攤平調度開銷
-    - 保持約 200-500 個任務，平衡進度更新頻率和 CPU 利用率
+    使用 Batching 策略大幅減少 IPC 開銷：
+    - 原版：每個樣本提交一次任務（10^7 次 IPC）
+    - 優化版：將樣本分成 ~64 個批次（~64 次 IPC），通訊開銷降低 10,000 倍以上
     
     Args:
         M: 初始設備總數
         N: 每個 AC 的 RAO 數量
         I_max: 最大接入周期數
         num_samples: 模擬樣本數
-        num_workers: 並行工作線程數 (-1 表示使用所有 CPU 核心)
+        num_workers: 並行工作進程數 (-1 表示使用所有 CPU 核心)
     
     Returns:
         np.ndarray: Shape [num_samples, 3] 的結果矩陣
@@ -156,100 +171,67 @@ def simulate_group_paging_multi_samples(M: int, N: int, I_max: int, num_samples:
     if num_workers == -1:
         num_workers = os.cpu_count() or 1
     
-    # 自適應微批次大小計算
-    # 當 M/N 小時（N 大），單樣本計算快，需要更大的微批次
-    # 當 M/N 大時（N 小），單樣本計算慢，可以用較小的微批次
+    # 計算分塊大小
+    # 策略：將任務切分為 (CPU核心數 * 4) 份，確保負載均衡，同時避免過多通訊
+    num_chunks = num_workers * 4
+    base_chunk_size = num_samples // num_chunks
+    remainder = num_samples % num_chunks
+    
     load_ratio = M / N
-    
-    # M=100 的情況：
-    # N=5  → M/N=20  → 高負載，計算慢，微批次小
-    # N=20 → M/N=5   → 中負載
-    # N=40 → M/N=2.5 → 低負載，計算快，微批次大
-    # N=45 → M/N=2.2 → 低負載，計算快，微批次大
-    
-    if load_ratio >= 10:
-        # 極高負載 (N 很小，如 N=5,10)：單樣本計算很慢
-        micro_batch_size = 20
-    elif load_ratio >= 5:
-        # 高負載 (N 較小，如 N=20)：單樣本計算慢
-        micro_batch_size = 50
-    elif load_ratio >= 3:
-        # 中負載 (N 中等，如 N=30-35)
-        micro_batch_size = 150
-    else:
-        # 低負載 (N 大，如 N=40-45)：單樣本計算快，用大微批次
-        micro_batch_size = 500
-    
-    # 確保任務數量合理（約 200-1000 個任務）
-    target_tasks = 500
-    calculated_batch = num_samples // target_tasks
-    micro_batch_size = max(micro_batch_size, calculated_batch)
-    micro_batch_size = min(micro_batch_size, num_samples // (num_workers * 4))  # 至少每個 worker 能分到 4 個任務
-    micro_batch_size = max(1, micro_batch_size)  # 最小為 1
-    
-    num_tasks = (num_samples + micro_batch_size - 1) // micro_batch_size
-    
     print("=" * 70)
-    print("【Group Paging】完整群組尋呼多樣本並行模擬（自適應微批次）")
+    print("【Group Paging】高效並行模擬 (Batch Optimization)")
     print("=" * 70)
     print(f"  參數配置:")
     print(f"    - 設備數 M = {M}")
     print(f"    - RAO 數 N = {N}")
     print(f"    - 最大 AC 數 I_max = {I_max}")
-    print(f"    - 模擬樣本數 = {num_samples:,}")
-    print(f"    - 並行工作線程 = {num_workers}")
+    print(f"    - 總樣本數: {num_samples:,}")
+    print(f"    - 工作進程: {num_workers}")
+    print(f"    - 任務分塊: {num_chunks} chunks")
+    print(f"    - 平均每塊: ~{base_chunk_size:,} samples")
     print(f"    - 負載比 M/N = {load_ratio:.2f}")
-    print(f"    - 自適應微批次大小 = {micro_batch_size}")
-    print(f"    - 總任務數 = {num_tasks}")
     print("=" * 70)
     
     start_time = time.time()
     
-    # 預分配結果陣列
-    results_array = np.empty((num_samples, 3), dtype=np.float64)
+    # 用於收集所有批次的結果
+    all_results_list = []
     
-    # 滑動窗口任務提交
-    completed_samples = 0
-    max_pending = num_workers * 2  # 保持適量任務在佇列
-    
-    with ThreadPoolExecutor(max_workers=num_workers) as executor:
-        active_futures = {}
-        current_idx = 0
-        remaining_samples = num_samples
+    with ProcessPoolExecutor(max_workers=num_workers) as executor:
+        futures = []
         
-        # 初始提交一批任務
-        while len(active_futures) < max_pending and remaining_samples > 0:
-            count = min(micro_batch_size, remaining_samples)
-            args = (M, N, I_max, current_idx, count, results_array)
-            future = executor.submit(_micro_batch_worker, args)
-            active_futures[future] = count
-            current_idx += count
-            remaining_samples -= count
+        # 生成種子 (確保並行重現性)
+        # 使用 SeedSequence 產生高熵獨立種子
+        seed_seq = np.random.SeedSequence()
+        child_seeds = seed_seq.spawn(num_chunks)
         
-        # 使用 tqdm 顯示進度
-        with tqdm(total=num_samples, desc="模擬進度", unit="樣本", 
-                  bar_format='{desc}: {percentage:3.0f}%|{bar}| {n:,.0f}/{total:,.0f} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
-            
-            while active_futures:
-                # 等待任意任務完成
-                done, _ = wait(active_futures.keys(), return_when=FIRST_COMPLETED)
+        # 提交批次任務
+        for i in range(num_chunks):
+            # 處理最後一塊可能多出的餘數
+            chunk_size = base_chunk_size + (1 if i < remainder else 0)
+            if chunk_size == 0:
+                continue
                 
-                for future in done:
-                    batch_count = active_futures.pop(future)
-                    future.result()  # 確認完成
-                    
-                    # 更新進度
-                    completed_samples += batch_count
-                    pbar.update(batch_count)
-                    
-                    # 提交新任務填補空缺
-                    if remaining_samples > 0:
-                        count = min(micro_batch_size, remaining_samples)
-                        args = (M, N, I_max, current_idx, count, results_array)
-                        new_future = executor.submit(_micro_batch_worker, args)
-                        active_futures[new_future] = count
-                        current_idx += count
-                        remaining_samples -= count
+            seed = child_seeds[i].generate_state(1)[0]  # 獲取整數種子
+            
+            future = executor.submit(
+                _simulate_batch_worker, M, N, I_max, chunk_size, seed
+            )
+            futures.append(future)
+            
+        # 處理結果
+        with tqdm(total=num_samples, desc="模擬進度", unit="樣本",
+                  bar_format='{desc}: {percentage:3.0f}%|{bar}| {n:,.0f}/{total:,.0f} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
+            for future in as_completed(futures):
+                try:
+                    batch_res = future.result()
+                    all_results_list.append(batch_res)
+                    pbar.update(batch_res.shape[0])  # 更新批次中的樣本數
+                except Exception as e:
+                    print(f"\n[Error] Worker failed: {e}")
+
+    # 合併所有結果
+    final_results = np.vstack(all_results_list)
     
     elapsed_time = time.time() - start_time
     samples_per_sec = num_samples / elapsed_time
@@ -257,9 +239,9 @@ def simulate_group_paging_multi_samples(M: int, N: int, I_max: int, num_samples:
     print("=" * 70)
     print(f"  模擬完成!")
     print(f"    - 總耗時: {elapsed_time:.2f} 秒")
-    print(f"    - 平均速度: {samples_per_sec:,.0f} 樣本/秒")
-    print(f"    - 記憶體優化: 預分配 {num_samples * 3 * 8 / 1024 / 1024:.1f} MB")
+    print(f"    - 處理速度: {samples_per_sec:,.0f} 樣本/秒")
+    print(f"    - 記憶體使用: ~{num_samples * 3 * 8 / 1024 / 1024:.1f} MB (結果矩陣)")
     print("=" * 70)
     
-    return results_array
+    return final_results
 

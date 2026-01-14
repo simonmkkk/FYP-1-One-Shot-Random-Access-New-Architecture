@@ -1,6 +1,6 @@
 # One-Shot Random Access 模擬與分析系統
 
-**版本**: 2.0.0 | **語言**: Python 3.14 (freethreaded) | **授權**: MIT License
+**版本**: 2.0.0 | **語言**: Python 3.13.9 | **授權**: MIT License
 
 ---
 
@@ -232,17 +232,17 @@ graph TB
 
 | 要求         | 版本                    | 說明                                                   |
 | ------------ | ----------------------- | ------------------------------------------------------ |
-| **Python**   | 3.14+ (freethreaded)    | **必須**使用 freethreaded 版本，以支持真正的多線程並行 |
+| **Python**   | 3.13.9                  | 使用 uv 會自動安裝正確版本                             |
 | **包管理器** | uv (推薦) 或 pip        | uv 更快更現代                                          |
 | **操作系統** | Windows / macOS / Linux | 全平台支持                                             |
 
-#### 為什麼需要 Python 3.14 freethreaded？
+#### 關於 Python 版本
 
-模擬模組使用 `ThreadPoolExecutor` 進行多線程並行計算。在標準 Python 中，GIL（全局解釋器鎖）會阻止真正的並行執行。Python 3.14 freethreaded 版本移除了 GIL，可以實現：
+本專案使用 Python 3.13.9。模擬模組使用 `ProcessPoolExecutor` 進行多進程並行計算，可實現：
 
-- 🚀 真正的多核並行
-- ⏱️ ~70,000 樣本/秒的吞吐量
-- 💪 10^7 樣本只需 ~2.5 分鐘
+- 🚀 多核並行計算
+- ⏱️ 高吞吐量的蒙特卡洛模擬
+- 💪 10^7 樣本可在合理時間內完成
 
 ### Step 2: 安裝依賴
 
@@ -356,7 +356,7 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 │
 ├── pyproject.toml                 # 📦 項目配置與依賴管理
 ├── uv.lock                        # 🔒 依賴版本鎖定
-├── .python-version                # 🐍 Python 版本指定 (3.14)
+├── .python-version                # 🐍 Python 版本指定 (3.13.9)
 ├── README.md                      # 📖 本文檔
 │
 ├── config/                        # ⚙️ 配置文件模組
@@ -479,12 +479,12 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 
 #### 3. simulation/ 模組
 
-| 文件                                        | 功能            | 輸入          | 輸出                     |
-| ------------------------------------------- | --------------- | ------------- | ------------------------ |
-| `core/one_shot_access.py`                   | 單 AC 模擬      | M, N          | success, collision, idle |
-| `core/group_paging.py`                      | 多 AC 模擬      | M, N, I_max   | P_S, T_a, P_C            |
-| `core/metrics.py`                           | 統計計算        | results_array | mean, CI                 |
-| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬 | config        | CSV 文件                 |
+| 文件                                        | 功能                              | 輸入          | 輸出                     |
+| ------------------------------------------- | --------------------------------- | ------------- | ------------------------ |
+| `core/one_shot_access.py`                   | 單 AC 模擬                        | M, N          | success, collision, idle |
+| `core/group_paging.py`                      | 多 AC 群組尋呼模擬（多進程多樣本） | M, N, I_max   | P_S, T_a, P_C            |
+| `core/metrics.py`                           | 統計計算                          | results_array | mean, CI                 |
+| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬                   | config        | CSV 文件                 |
 
 #### 4. plot/ 模組
 
@@ -854,7 +854,7 @@ flowchart TD
 使用蒙特卡洛模擬驗證理論公式：
 
 - 執行 10^7 次隨機模擬
-- 使用多線程並行加速
+- 使用多進程並行加速
 - 計算與理論值的誤差
 
 #### 執行流程
@@ -864,7 +864,7 @@ flowchart TD
     Start([開始]) --> LoadConfig[載入 config/simulation/figure345.yaml]
     LoadConfig --> ForN{對每個 N 值}
     ForN --> InitSamples[初始化 10^7 樣本]
-    InitSamples --> Parallel[ThreadPoolExecutor 並行執行]
+    InitSamples --> Parallel[ProcessPoolExecutor 並行執行]
     Parallel --> SingleSample[單樣本模擬]
     SingleSample --> ForAC{對每個 AC}
     ForAC --> Random[隨機選擇 RAO]
@@ -892,7 +892,7 @@ flowchart TD
 | I_max       | figure345.yaml | 最大周期數 | 10            |
 | N range     | figure345.yaml | N 範圍     | 5-45, 步長 1  |
 | num_samples | figure345.yaml | 樣本數     | 10,000,000    |
-| num_workers | figure345.yaml | 線程數     | -1 (全部核心) |
+| num_workers | figure345.yaml | 進程數     | -1 (全部核心) |
 
 #### 輸出文件
 
@@ -1096,7 +1096,7 @@ scan:
 
 performance:
   num_samples: 10000000   # 樣本數 (10^7)
-  num_workers: -1         # 線程數 (-1 = 全部)
+  num_workers: -1         # 進程數 (-1 = 全部)
 
 output:
   save_csv: true   # 是否保存 CSV
@@ -1105,7 +1105,7 @@ output:
 **參數影響**:
 
 - `num_samples`: 樣本數越多，結果越準確，但耗時越長
-- `num_workers`: 線程數，建議使用 -1 自動檢測
+- `num_workers`: 進程數，建議使用 -1 自動檢測
 
 ### single_point.yaml (單點測試)
 
@@ -1119,7 +1119,7 @@ simulation:
 
 performance:
   num_samples: 1000   # 少量樣本
-  num_workers: 16     # 線程數
+  num_workers: 16     # 進程數
 
 output:
   save_csv: true
@@ -1347,12 +1347,12 @@ generate_performance_report()
 
 ## ❓ 常見問題 FAQ
 
-### Q1: 為什麼必須使用 Python 3.14 freethreaded？
+### Q1: 為什麼使用 Python 3.13.9？
 
-**A**: 模擬模組使用 `ThreadPoolExecutor` 進行多線程並行。標準 Python 的 GIL 會阻止真正的並行執行，而 freethreaded 版本移除了 GIL，可以實現：
+**A**: 本專案固定使用 Python 3.13.9 以確保環境一致性。模擬模組使用 `ProcessPoolExecutor` 進行多進程並行，可實現：
 
-- 真正的多核並行
-- ~70,000 樣本/秒的吞吐量
+- 多核並行計算
+- 高效率的蒙特卡洛模擬
 
 ### Q2: Figure 3-5 模擬為什麼這麼慢？
 
@@ -1360,7 +1360,6 @@ generate_performance_report()
 
 **加速建議**:
 
-- 確保使用 freethreaded Python
 - 使用更多 CPU 核心
 - 減少 `num_samples`（會降低準確性）
 
@@ -1398,7 +1397,7 @@ generate_performance_report()
 
 - `num_samples`: 減少可加快速度（如 1000000）
 - `N range`: 調整 start/stop 減少計算點
-- `num_workers`: 指定線程數
+- `num_workers`: 指定進程數
 
 ### Q7: 圖表顯示不正常/中文亂碼？
 

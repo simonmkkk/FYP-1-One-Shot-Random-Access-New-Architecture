@@ -27,7 +27,7 @@ import csv
 from pathlib import Path
 from datetime import datetime
 
-from ..core.group_paging import simulate_group_paging_multi_samples, clear_thread_local_rng
+from ..core.group_paging import simulate_group_paging_multi_samples
 from ..core.metrics import calculate_performance_metrics
 from analytical.figure_analysis import load_figure345_results
 
@@ -88,7 +88,7 @@ def run_figure345_simulation(config: dict, timer: 'SimpleTimer' = None) -> dict:
     print("=" * 70)
     print(f"M = {M}, I_max = {I_max}")
     print(f"N 範圍: {scan_config['start']} 到 {scan_config['stop']-1}")
-    print(f"樣本數: {num_samples}, 工作線程: {num_workers}")
+    print(f"樣本數: {num_samples}, 工作進程: {num_workers}")
     print("=" * 70)
     
     N_values = []
@@ -99,9 +99,13 @@ def run_figure345_simulation(config: dict, timer: 'SimpleTimer' = None) -> dict:
     for N in N_range:
         print(f"\n正在模擬 N={N}...")
         
+        if timer is not None:
+            timer.start(f"simulate_group_paging_multi_samples(N={N})")
         results_array = simulate_group_paging_multi_samples(
             M, N, I_max, num_samples, num_workers
         )
+        if timer is not None:
+            timer.end(f"simulate_group_paging_multi_samples(N={N})")
         means, _ = calculate_performance_metrics(results_array)
         mean_ps, mean_ta, mean_pc = means
         
@@ -114,10 +118,6 @@ def run_figure345_simulation(config: dict, timer: 'SimpleTimer' = None) -> dict:
         # 記憶體優化：釋放大型結果陣列並強制 gc
         del results_array
         gc.collect()
-    
-    # 清理 thread-local RNG，釋放線程記憶體
-    clear_thread_local_rng()
-    gc.collect()
     
     results = {
         'N_values': N_values,
