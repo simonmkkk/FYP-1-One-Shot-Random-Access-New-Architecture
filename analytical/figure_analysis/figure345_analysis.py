@@ -23,16 +23,12 @@ from datetime import datetime
 
 from ..theoretical.theoretical import theoretical_calculation
 
-# 可選的計時器支持
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from performance import SimpleTimer
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure345_analysis(config: dict, save_csv: bool = True, timer: 'SimpleTimer' = None) -> dict:
+def run_figure345_analysis(config: dict, save_csv: bool = True) -> dict:
     """
     運行 Figure 3, 4, 5 合併解析計算
     

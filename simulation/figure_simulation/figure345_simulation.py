@@ -31,10 +31,6 @@ from ..core.group_paging import simulate_group_paging_multi_samples
 from ..core.metrics import calculate_performance_metrics
 from analytical.figure_analysis import load_figure345_results
 
-# 可選的計時器支持
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from performance import SimpleTimer
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -63,7 +59,7 @@ def calculate_approximation_error(approximation_value: float, simulation_value: 
         return abs(simulation_value) * 100 if simulation_value != 0 else 0.0
 
 
-def run_figure345_simulation(config: dict, timer: 'SimpleTimer' = None) -> dict:
+def run_figure345_simulation(config: dict) -> dict:
     """
     運行 Figure 3, 4, 5 合併模擬
     
@@ -99,13 +95,9 @@ def run_figure345_simulation(config: dict, timer: 'SimpleTimer' = None) -> dict:
     for N in N_range:
         print(f"\n正在模擬 N={N}...")
         
-        if timer is not None:
-            timer.start(f"simulate_group_paging_multi_samples(N={N})")
         results_array = simulate_group_paging_multi_samples(
             M, N, I_max, num_samples, num_workers
         )
-        if timer is not None:
-            timer.end(f"simulate_group_paging_multi_samples(N={N})")
         means, _ = calculate_performance_metrics(results_array)
         mean_ps, mean_ta, mean_pc = means
         

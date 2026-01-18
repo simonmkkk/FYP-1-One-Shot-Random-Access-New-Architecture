@@ -19,16 +19,12 @@ from pathlib import Path
 from datetime import datetime
 from .figure1_analysis import run_figure1_analysis, load_figure1_results
 
-# 可選的計時器支持
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from performance import SimpleTimer
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = None, timer: 'SimpleTimer' = None) -> dict:
+def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = None) -> dict:
     """
     運行 Figure 2 解析計算（基於 Figure 1 數據）
     

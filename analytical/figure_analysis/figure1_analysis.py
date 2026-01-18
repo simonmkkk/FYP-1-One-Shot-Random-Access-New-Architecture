@@ -23,10 +23,6 @@ from ..formulas.formulas import (
     paper_formula_4_success_approx,
     paper_formula_5_collision_approx,
 )
-# 可選的計時器支持
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from performance import SimpleTimer
 
 
 def _get_actual_n_jobs(n_jobs: int) -> int:
@@ -110,14 +106,13 @@ def compute_single_point(M, N):
             N_S_approx/N if N > 0 else 0, N_C_approx/N if N > 0 else 0, elapsed)
 
 
-def run_figure1_analysis(config: dict, save_csv: bool = True, timer: 'SimpleTimer' = None) -> dict:
+def run_figure1_analysis(config: dict, save_csv: bool = True) -> dict:
     """
     運行 Figure 1 解析計算
     
     Args:
         config: 配置字典
         save_csv: 是否保存結果到 CSV
-        timer: 可選的計時器（用於記錄各 N 值的計算時間）
     
     Returns:
         結果字典
@@ -154,10 +149,6 @@ def run_figure1_analysis(config: dict, save_csv: bool = True, timer: 'SimpleTime
             f"計算 N={N}"
         )
         
-        # 記錄到計時器
-        n_elapsed = time.time() - n_start_time
-        if timer:
-            timer.record(f"N={N} 計算", n_elapsed)
         
         M_values = [r[0] for r in results_list]
         analytical_N_S = [r[1] for r in results_list]
