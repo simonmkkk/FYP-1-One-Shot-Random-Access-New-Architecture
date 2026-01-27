@@ -15,18 +15,16 @@ simulation 套件根目錄
     ├── __init__.py              # 此文件，套件入口
     ├── simulation_figure345.py  # Figure 3,4,5 模擬入口
     ├── config/                  # 配置文件目錄
-    │   ├── default_config.yaml
-    │   └── simulation_figure345.yaml
-    ├── core/                    # 核心模組目錄
-    │   ├── __init__.py          # 核心模組入口
-    │   ├── config.py            # 配置類
-    │   ├── constants.py         # 常數定義
-    │   ├── metrics.py           # 統計指標
-    │   ├── one_shot_access.py   # 模擬引擎
-    │   └── runner.py            # 並行執行器
-    └── figure_simulation/       # Figure 模擬目錄（舊版兼容）
+    │   └── simulation_figure345.yaml  # 論文參數配置 (N=5-45, 10^7 樣本)
+    └── core/                    # 核心模組目錄
+        ├── __init__.py          # 核心模組入口
+        ├── config.py            # 配置類
+        ├── constants.py         # 常數定義
+        ├── metrics.py           # 統計指標
+        ├── one_shot_access.py   # 模擬引擎
+        └── runner.py            # 並行執行器
 
-架構重構日期: 2026-01-24
+架構重構日期: 2026-01-27
 ============================================================================
 """
 

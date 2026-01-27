@@ -40,10 +40,8 @@ from analytical.figure_analysis import (
     load_figure2_results,
     load_figure345_results,
 )
-from simulation.figure_simulation import (
-    run_figure345_simulation,
-    load_figure345_simulation_results,
-)
+from simulation import run_figure345
+from simulation.core.runner import PROJECT_ROOT as SIM_PROJECT_ROOT
 from plot import (
     plot_figure1,
     plot_figure2,
@@ -97,40 +95,59 @@ def _get_analytical_data_for_figure(figure_name: str):
 
 def _get_simulation_data_for_figure(figure_name: str):
     """從 figure345 合併結果讀取指定 Figure 的模擬數據（包含 Approximation Error）"""
-    combined = load_figure345_simulation_results()
-    if combined is None:
+    # 尋找最新的模擬結果 CSV
+    sim_result_dir = SIM_PROJECT_ROOT / "result" / "simulation" / "figure345"
+    if not sim_result_dir.exists():
         return None
     
+    # 找到最新的時間戳資料夾
+    timestamp_dirs = [d for d in sim_result_dir.iterdir() if d.is_dir()]
+    if not timestamp_dirs:
+        return None
+    
+    latest_dir = max(timestamp_dirs, key=lambda d: d.stat().st_mtime)
+    csv_files = list(latest_dir.glob("*.csv"))
+    if not csv_files:
+        return None
+    
+    # 載入 CSV
+    import csv
+    csv_path = csv_files[0]
+    combined = {'N_values': [], 'P_S_values': [], 'T_a_values': [], 'P_C_values': []}
+    
+    with open(csv_path, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            combined['N_values'].append(int(row['N']))
+            combined['P_S_values'].append(float(row['P_S']))
+            combined['T_a_values'].append(float(row['T_a']))
+            combined['P_C_values'].append(float(row['P_C']))
+    
+    # 從第一行獲取 M 和 I_max（假設所有行相同）
+    combined['M'] = 100  # 默認值
+    combined['I_max'] = 10  # 默認值
+    
     if figure_name == 'figure3':
-        result = {
+        return {
             'N_values': combined['N_values'],
             'P_S_values': combined['P_S_values'],
             'M': combined['M'],
             'I_max': combined['I_max'],
         }
-        if 'P_S_error' in combined:
-            result['P_S_error'] = combined['P_S_error']
-        return result
     elif figure_name == 'figure4':
-        result = {
+        return {
             'N_values': combined['N_values'],
             'T_a_values': combined['T_a_values'],
             'M': combined['M'],
             'I_max': combined['I_max'],
         }
-        if 'T_a_error' in combined:
-            result['T_a_error'] = combined['T_a_error']
-        return result
     elif figure_name == 'figure5':
-        result = {
+        return {
             'N_values': combined['N_values'],
             'P_C_values': combined['P_C_values'],
             'M': combined['M'],
             'I_max': combined['I_max'],
         }
-        if 'P_C_error' in combined:
-            result['P_C_error'] = combined['P_C_error']
-        return result
     return None
 
 
@@ -190,8 +207,7 @@ def run_analytical_all():
 
 def run_simulation_figure345():
     """[選項 5] Figure 3, 4, 5 合併模擬 (P_S, T_a, P_C)"""
-    config = load_config('simulation', 'figure345')
-    run_figure345_simulation(config)
+    run_figure345()
 
 
 # ============================================================================

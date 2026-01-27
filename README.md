@@ -349,7 +349,7 @@ uv run python main.py run figure345
 ```
 FYP-1-One-Shot-Random-Access-New-Architecture/
 │
-├── main.py                        # 🎯 主程式入口 (541 行)
+├── main.py                        # 🎯 主程式入口
 │                                  #    - interactive_menu(): 互動式選單
 │                                  #    - CLI 命令解析
 │                                  #    - 13 個功能選項的調用入口
@@ -361,72 +361,53 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 │
 ├── config/                        # ⚙️ 配置文件模組
 │   ├── __init__.py               #    導出 load_config 等函數
-│   ├── README.md                 #    模組說明
 │   │
 │   ├── loader/                   #    配置載入器子模組
 │   │   ├── __init__.py
-│   │   ├── loader.py             #    load_config(), get_config_path()
-│   │   └── README.md
+│   │   └── loader.py             #    load_config(), get_config_path()
 │   │
-│   ├── analytical/               #    解析計算配置
-│   │   ├── figure1.yaml          #    Figure 1 & 2 配置
-│   │   ├── figure345.yaml        #    Figure 3-5 配置
-│   │   └── README.md
-│   │
-│   └── simulation/               #    模擬配置
-│       ├── figure345.yaml        #    Figure 3-5 模擬配置
-│       ├── single_point.yaml     #    單點測試配置
-│       └── README.md
+│   └── analytical/               #    解析計算配置
+│       ├── figure1.yaml          #    Figure 1 & 2 配置
+│       └── figure345.yaml        #    Figure 3-5 配置 (M=100, N=5-45, I_max=10)
 │
 ├── analytical/                    # 📐 解析計算模組
 │   ├── __init__.py               #    導出所有公式函數
-│   ├── README.md                 #    模組說明
 │   │
 │   ├── formulas/                 #    論文公式實現
 │   │   ├── __init__.py
-│   │   ├── formulas.py           #    Eq. 1-10 所有公式 (257 行)
-│   │   └── README.md
+│   │   └── formulas.py           #    Eq. 1-10 所有公式
 │   │
 │   ├── theoretical/              #    理論計算
 │   │   ├── __init__.py
-│   │   ├── theoretical.py        #    多周期迭代計算 (58 行)
-│   │   └── README.md
+│   │   └── theoretical.py        #    多周期迭代計算
 │   │
 │   └── figure_analysis/          #    各圖表解析計算
 │       ├── __init__.py
-│       ├── figure1_analysis.py   #    Figure 1 計算 (244 行)
-│       ├── figure2_analysis.py   #    Figure 2 誤差計算 (203 行)
-│       ├── figure345_analysis.py #    Figure 3-5 計算 (163 行)
-│       └── README.md
+│       ├── figure1_analysis.py   #    Figure 1 計算
+│       ├── figure2_analysis.py   #    Figure 2 誤差計算
+│       └── figure345_analysis.py #    Figure 3-5 計算
 │
 ├── simulation/                    # 🔬 模擬模組
 │   ├── __init__.py               #    導出模擬函數
-│   ├── README.md                 #    模組說明
+│   ├── simulation_figure345.py   #    Figure 3-5 模擬入口
 │   │
-│   ├── core/                     #    核心模擬引擎
-│   │   ├── __init__.py
-│   │   ├── one_shot_access.py    #    所有模擬函數 (Batch Optimization)
-│   │   ├── metrics.py            #    性能指標計算
-│   │   └── README.md
+│   ├── config/                   #    模擬配置
+│   │   └── simulation_figure345.yaml  # 論文參數 (N=5-45, 10^7 樣本)
 │   │
-│   └── figure_simulation/        #    圖表模擬
+│   └── core/                     #    核心模擬引擎
 │       ├── __init__.py
-│       ├── figure345_simulation.py  # Figure 3-5 模擬 (288 行)
-│       └── README.md
+│       ├── config.py             #    配置類
+│       ├── constants.py          #    常數定義
+│       ├── metrics.py            #    性能指標計算
+│       ├── one_shot_access.py    #    模擬函數 (Batch Optimization)
+│       └── runner.py             #    並行執行器
 │
 ├── plot/                          # 📊 繪圖模組
 │   ├── __init__.py               #    導出繪圖函數
-│   ├── README.md                 #    模組說明
 │   ├── common.py                 #    共用設定 (matplotlib 配置)
-│   ├── figure1.py                #    Figure 1 繪圖 (195 行)
-│   ├── figure2.py                #    Figure 2 繪圖 (161 行)
-│   └── figure345.py              #    Figure 3-5 繪圖 (310 行)
-│
-├── performance/                   # 📊 性能監測模組
-│   ├── __init__.py               #    導出性能監測函數
-│   ├── README.md                 #    模組說明
-│   ├── performance_monitor.py    #    核心監測裝飾器和數據收集器
-│   └── performance_report.py     #    報告生成和數據保存
+│   ├── figure1.py                #    Figure 1 繪圖
+│   ├── figure2.py                #    Figure 2 繪圖
+│   └── figure345.py              #    Figure 3-5 繪圖
 │
 ├── result/                        # 📁 結果輸出 (運行時自動創建)
 │   ├── analytical/               #    解析結果
@@ -435,36 +416,28 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 │   │   └── figure345/{timestamp}/#    figure345_analytical.csv
 │   │
 │   ├── simulation/               #    模擬結果
-│   │   └── figure345/{timestamp}/#    figure345_simulation.csv
+│   │   └── figure345/{timestamp}/#    CSV 結果
 │   │
-│   ├── graph/                    #    圖表輸出
-│   │   ├── figure1/{timestamp}/  #    figure1.png
-│   │   ├── figure2/{timestamp}/  #    figure2.png
-│   │   ├── figure3/{timestamp}/  #    figure3.png
-│   │   ├── figure4/{timestamp}/  #    figure4.png
-│   │   └── figure5/{timestamp}/  #    figure5.png
-│   │
-│   └── performance/              #    性能報告輸出
-│       └── {timestamp}/          #    performance_data.json
+│   └── graph/                    #    圖表輸出
+│       ├── figure1/{timestamp}/  #    figure1.png
+│       ├── figure2/{timestamp}/  #    figure2.png
+│       ├── figure3/{timestamp}/  #    figure3.png
+│       ├── figure4/{timestamp}/  #    figure4.png
+│       └── figure5/{timestamp}/  #    figure5.png
 │
-├── docs/                          # 📚 文檔
-│   ├── FYP-Paper-1.pdf           #    論文 PDF
-│   └── Paper.md                  #    論文筆記
-│
-└── workflow/                      # 🔄 工作流程文檔
-    └── main_workflow.md          #    完整執行流程（含 Mermaid 圖）
+└── docs/                          # 📚 文檔
+    └── One-Shot Random Access.pdf #    論文 PDF
 ```
 
 ### 各模組功能詳細說明
 
 #### 1. config/ 模組
 
-| 文件                        | 功能                | 主要函數/內容                               |
-| --------------------------- | ------------------- | ------------------------------------------- |
-| `loader/loader.py`          | 配置載入器          | `load_config(type, name)` - 載入 YAML 配置  |
-| `analytical/figure1.yaml`   | Figure 1&2 配置     | n_values, m_over_n_max, m_start, n_jobs     |
-| `analytical/figure345.yaml` | Figure 3-5 解析配置 | M, I_max, N_start, N_stop, N_step           |
-| `simulation/figure345.yaml` | Figure 3-5 模擬配置 | M, I_max, N range, num_samples, num_workers |
+| 文件                        | 功能                | 主要函數/內容                              |
+| --------------------------- | ------------------- | ------------------------------------------ |
+| `loader/loader.py`          | 配置載入器          | `load_config(type, name)` - 載入 YAML 配置 |
+| `analytical/figure1.yaml`   | Figure 1&2 配置     | n_values, m_over_n_max, m_start, n_jobs    |
+| `analytical/figure345.yaml` | Figure 3-5 解析配置 | M, I_max, N_start, N_stop, N_step          |
 
 #### 2. analytical/ 模組
 
@@ -478,11 +451,13 @@ FYP-1-One-Shot-Random-Access-New-Architecture/
 
 #### 3. simulation/ 模組
 
-| 文件                                        | 功能                                  | 輸入          | 輸出          |
-| ------------------------------------------- | ------------------------------------- | ------------- | ------------- |
-| `core/one_shot_access.py`                   | 所有模擬函數（單 AC / 單樣本 / 批量） | M, N, I_max   | P_S, T_a, P_C |
-| `core/metrics.py`                           | 統計計算                              | results_array | mean, CI      |
-| `figure_simulation/figure345_simulation.py` | Figure 3-5 模擬                       | config        | CSV 文件      |
+| 文件                               | 功能                                  | 輸入          | 輸出          |
+| ---------------------------------- | ------------------------------------- | ------------- | ------------- |
+| `simulation_figure345.py`          | Figure 3-5 模擬入口                   | YAML 配置     | CSV 文件      |
+| `core/one_shot_access.py`          | 所有模擬函數（單 AC / 單樣本 / 批量） | M, N, I_max   | P_S, T_a, P_C |
+| `core/runner.py`                   | 並行執行器                            | Config        | CSV 文件      |
+| `core/metrics.py`                  | 統計計算                              | results_array | mean, CI      |
+| `config/simulation_figure345.yaml` | 論文參數配置 (N=5-45, 10^7 樣本)      | -             | -             |
 
 > **⚡ Batch Optimization**: 使用分塊處理策略大幅減少 IPC 開銷，10^7 樣本約 4 分鐘完成（~40,000 樣本/秒）
 
@@ -512,9 +487,8 @@ graph TD
         Theoretical[analytical/theoretical/theoretical.py]
         FigAnalysis[analytical/figure_analysis/]
         OneShot[simulation/core/one_shot_access.py]
-        GroupPaging[simulation/core/group_paging.py]
+        Runner[simulation/core/runner.py]
         Metrics[simulation/core/metrics.py]
-        FigSim[simulation/figure_simulation/]
     end
     
     subgraph PlotLayer[繪圖層]
@@ -531,19 +505,18 @@ graph TD
     Config --> YAML
     
     Main --> FigAnalysis
-    Main --> FigSim
+    Main --> Runner
     Main --> PlotModule
     
     FigAnalysis --> Formulas
     FigAnalysis --> Theoretical
     Theoretical --> Formulas
     
-    FigSim --> GroupPaging
-    GroupPaging --> OneShot
-    FigSim --> Metrics
+    Runner --> OneShot
+    Runner --> Metrics
     
     FigAnalysis --> CSV
-    FigSim --> CSV
+    Runner --> CSV
     CSV --> PlotModule
     PlotModule --> PNG
 ```
@@ -559,7 +532,7 @@ flowchart TB
     subgraph Input[輸入階段]
         YAML1[config/analytical/figure1.yaml]
         YAML345A[config/analytical/figure345.yaml]
-        YAML345S[config/simulation/figure345.yaml]
+        YAML345S[simulation/config/simulation_figure345.yaml]
     end
     
     subgraph Analytical[解析計算階段]
