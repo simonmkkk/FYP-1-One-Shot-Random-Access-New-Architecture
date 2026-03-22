@@ -1,0 +1,20 @@
+# ============================================================================
+# Config: Figure 3, 4, 5 (Analytical)
+# ============================================================================
+# Combined analysis for P_S, T_a, P_C vs N
+# ============================================================================
+
+name: figure345
+description: "Figure 3, 4, 5: P_S, T_a, P_C vs N (M=100, I_max=10)"
+
+# Analysis type
+figure_type: figure345
+
+# Simulation parameters
+M: 100            # Total UEs (paper: M = 100)
+I_max: 10         # Max Access Cycles (paper: I_max = 10)
+
+# N scan range (paper: N = 5 to 45)
+N_start: 5
+N_stop: 46
+N_step: 1

@@ -1,5 +1,5 @@
 # ============================================================================
-# Simulation Figure 3, 4, 5: One-Shot Random Access N-scan simulation
+# Simulation: UE Sweep — P_S, T_a, P_C vs M (fixed N)
 # ============================================================================
 
 from pathlib import Path
@@ -9,18 +9,17 @@ from simulation.core.runner import run_experiment
 from simulation.core.metrics import SimulationResult
 
 
-def run_figure345() -> List[SimulationResult]:
+def run_ue_sweep() -> List[SimulationResult]:
     """
-    Run Figure 3, 4, 5 combined simulation — N value sweep.
+    Run UE sweep simulation — M value sweep with fixed N.
 
     Returns:
         List[SimulationResult]: Simulation results list.
     """
-    # Use the new configs/ directory
     PROJECT_ROOT = Path(__file__).resolve().parent.parent
-    config_path = PROJECT_ROOT / "configs" / "simulation" / "config_figure345.yaml"
+    config_path = PROJECT_ROOT / "configs" / "simulation" / "config_ue_sweep.yaml"
     return run_experiment(config_path)
 
 
 if __name__ == "__main__":
-    run_figure345()
+    run_ue_sweep()

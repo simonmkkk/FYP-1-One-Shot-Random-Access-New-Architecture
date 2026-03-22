@@ -1,36 +1,23 @@
-"""
-============================================================================
-simulation 套件根目錄
-============================================================================
-
-提供 One-Shot Random Access 蒙特卡洛模擬功能。
-
-用法示例：
-    from simulation import Config                 # 導入配置類
-    from simulation import run_experiment         # 導入實驗入口
-    from simulation import run_figure345          # 導入 Figure 3,4,5 模擬
-
-套件結構：
-    simulation/
-    ├── __init__.py              # 此文件，套件入口
-    ├── simulation_figure345.py  # Figure 3,4,5 模擬入口
-    ├── config/                  # 配置文件目錄
-    │   └── simulation_figure345.yaml  # 論文參數配置 (N=5-45, 10^7 樣本)
-    └── core/                    # 核心模組目錄
-        ├── __init__.py          # 核心模組入口
-        ├── config.py            # 配置類
-        ├── constants.py         # 常數定義
-        ├── metrics.py           # 統計指標
-        ├── one_shot_access.py   # 模擬引擎
-        └── runner.py            # 並行執行器
-
-架構重構日期: 2026-01-27
-============================================================================
-"""
-
 # ============================================================================
-# 核心模組導入
+# simulation - One-Shot Random Access Monte Carlo simulation package
 # ============================================================================
+#
+# Package structure:
+#   simulation/
+#   ├── __init__.py              # Package root (this file)
+#   ├── simulation_figure345.py  # Figure 3, 4, 5 simulation entry
+#   ├── config/                  # Config files (YAML)
+#   └── core/                    # Core modules
+#       ├── config.py            # Config dataclass
+#       ├── constants.py         # Default constants
+#       ├── metrics.py           # Performance metrics
+#       ├── one_shot_access.py   # Simulation engine
+#       ├── runner.py            # Parallel execution
+#       └── utils/
+#           └── progress_manager.py  # Rich progress bar
+# ============================================================================
+
+# Core module imports
 from .core.config import Config
 from .core.constants import (
     DEFAULT_M,
@@ -54,36 +41,31 @@ from .core.runner import (
     SIM_RESULT_ROOT,
 )
 
-# ============================================================================
-# 模擬入口函數導入
-# ============================================================================
+# Simulation entry point
 from .simulation_figure345 import run_figure345
 
-# ============================================================================
-# 模組導出列表
-# ============================================================================
 __all__ = [
-    # 配置類
+    # Config
     'Config',
     'DEFAULT_M',
     'DEFAULT_N',
     'DEFAULT_I_MAX',
     'DEFAULT_NUM_SAMPLES',
     'DEFAULT_NUM_WORKERS',
-    # 模擬函數
+    # Simulation functions
     'simulate_one_shot_access_single_ac',
     'simulate_group_paging_single_sample',
     'simulate_group_paging_multi_samples',
-    # 統計類
+    # Metrics
     'SimulationResult',
     'calculate_performance_metrics',
-    # Runner 函數
+    # Runner
     'run_single_n_simulation',
     'run_n_scan',
     'run_experiment',
     'save_results_to_csv',
     'PROJECT_ROOT',
     'SIM_RESULT_ROOT',
-    # 模擬入口
+    # Entry point
     'run_figure345',
 ]

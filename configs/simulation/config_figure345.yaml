@@ -1,0 +1,32 @@
+# ============================================================================
+# Config: Figure 3, 4, 5 (Simulation)
+# ============================================================================
+# Monte Carlo simulation for P_S, T_a, P_C vs N
+#
+# Paper reference (IEEE Communications Letters, 2012):
+#   "Modeling and Estimation of One-Shot Random Access for
+#    Finite-User Multichannel Slotted ALOHA Systems"
+# ============================================================================
+
+name: figure345
+description: "Figure 3, 4, 5 simulation (P_S, T_a, P_C) — paper reproduction"
+
+# Simulation parameters (paper Section III)
+simulation:
+  M: 100               # Total UEs (paper: M = 100)
+  I_max: 10            # Max Access Cycles (paper: I_max = 10)
+  num_samples: 10000   # Paper precision: 10^7 samples
+  num_workers: -1      # Parallel workers (-1 = all CPU cores)
+
+# N values to sweep
+# Supports: range "10-300:10", list [5,10,15], or single value 50
+n_values: "10-300:10"
+
+# Output configuration
+output:
+  save_csv: true
+  result_dir: "result/simulation/figure345"
+
+# Experiment metadata
+experiment:
+  name: "figure345"

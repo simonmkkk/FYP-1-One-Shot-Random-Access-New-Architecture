@@ -1,0 +1,29 @@
+# ============================================================================
+# Config: UE Sweep (Simulation)
+# ============================================================================
+# Monte Carlo simulation for P_S, T_a, P_C vs M (UE count)
+# Fixed N (RAO), sweep M from 10 to 300
+# ============================================================================
+
+name: ue_sweep
+description: "UE Sweep: P_S, T_a, P_C vs M (fixed N)"
+
+# Simulation parameters
+simulation:
+  N: 30                # Fixed RAO count (Preamble pool size)
+  I_max: 10            # Max Access Cycles
+  num_samples: 10000   # Monte Carlo samples per point
+  num_workers: -1      # Parallel workers (-1 = all CPU cores)
+
+# M values to sweep (UE count)
+# Supports: range "10-300:10", list [50,100,150], or single value 100
+m_values: "10-300:10"
+
+# Output configuration
+output:
+  save_csv: true
+  result_dir: "result/simulation/ue_sweep"
+
+# Experiment metadata
+experiment:
+  name: "ue_sweep"

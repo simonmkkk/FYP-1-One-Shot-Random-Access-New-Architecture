@@ -1,53 +1,16 @@
-"""
-============================================================================
-constants - 模擬常數定義
-============================================================================
-
-此模組定義 One-Shot Random Access 模擬中使用的預設常數。
-
-Input: 無
-Output: 預設常數值
-Position: simulation core 的常數層（所有模組共用的預設值）
-
-注意：一旦此文件被更新，請同步更新：
-- 項目根目錄 README.md
-============================================================================
-"""
-
 # ============================================================================
-# 預設模擬參數
+# constants - Default simulation parameters
 # ============================================================================
 
-# 預設初始設備數量（論文設置）
-DEFAULT_M: int = 100
-
-# 預設 RAO 數量（Preamble pool size）
-DEFAULT_N: int = 50
-
-# 預設最大 Access Cycle 數（論文設置）
-DEFAULT_I_MAX: int = 10
-
-# 預設模擬樣本數
-DEFAULT_NUM_SAMPLES: int = 100000
-
-# 預設並行工作進程數（-1 表示使用所有 CPU 核心）
-DEFAULT_NUM_WORKERS: int = -1
+# Default simulation parameters
+DEFAULT_M: int = 100           # Initial number of UEs (paper setting)
+DEFAULT_N: int = 50            # Number of RAOs (Preamble pool size)
+DEFAULT_I_MAX: int = 10        # Max Access Cycle count (paper setting)
+DEFAULT_NUM_SAMPLES: int = 100000   # Default simulation samples
+DEFAULT_NUM_WORKERS: int = -1       # Parallel workers (-1 = all CPU cores)
 
 # ============================================================================
-# 預設 N 值掃描範圍
-# ============================================================================
-
-# N 值掃描起始值
-DEFAULT_N_SCAN_START: int = 10
-
-# N 值掃描結束值（不包含）
-DEFAULT_N_SCAN_STOP: int = 101
-
-# N 值掃描步長
-DEFAULT_N_SCAN_STEP: int = 10
-
-# ============================================================================
-# 模組導出
+# Module exports
 # ============================================================================
 
 __all__ = [
@@ -56,7 +19,4 @@ __all__ = [
     "DEFAULT_I_MAX",
     "DEFAULT_NUM_SAMPLES",
     "DEFAULT_NUM_WORKERS",
-    "DEFAULT_N_SCAN_START",
-    "DEFAULT_N_SCAN_STOP",
-    "DEFAULT_N_SCAN_STEP",
 ]
