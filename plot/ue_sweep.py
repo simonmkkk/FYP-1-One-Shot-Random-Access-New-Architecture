@@ -74,19 +74,24 @@ def plot_ue_sweep_ps(data: dict, *, save_path: str = None, show: bool = False):
     """
     fig, ax = plt.subplots(figsize=(10, 6))
 
+    # Keep UE sweep style consistent with Figure 3/4/5.
     ax.plot(data['M_values'], data['P_S_values'],
-            'b-o', linewidth=2, markersize=5, label='Simulation')
+            'b-', linewidth=2, label='Simulation Curve')
+    ax.plot(data['M_values'], data['P_S_values'],
+            'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+            label='Simulation Results')
 
     ax.set_xlabel('M (Number of UEs)', fontsize=12)
-    ax.set_ylabel('Access Success Probability ($P_S$)', fontsize=12)
+    ax.set_ylabel('Access Success Probability ($P_S$)', fontsize=12, color='blue')
+    ax.tick_params(axis='y', labelcolor='blue')
     ax.set_ylim(0, 1.05)
 
     N = data.get('N', '?')
     I_max = data.get('I_max', '?')
-    ax.set_title(f'Access Success Probability vs M (N={N}, I_max={I_max})',
+    ax.set_title(f'UE Sweep: Access Success Probability vs M (N={N}, I_max={I_max})',
                  fontsize=13, fontweight='bold')
 
-    ax.legend(fontsize=10)
+    ax.legend(loc='upper left', fontsize=10)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
 
@@ -107,17 +112,21 @@ def plot_ue_sweep_ta(data: dict, *, save_path: str = None, show: bool = False):
     fig, ax = plt.subplots(figsize=(10, 6))
 
     ax.plot(data['M_values'], data['T_a_values'],
-            'r-s', linewidth=2, markersize=5, label='Simulation')
+            'b-', linewidth=2, label='Simulation Curve')
+    ax.plot(data['M_values'], data['T_a_values'],
+            'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+            label='Simulation Results')
 
     ax.set_xlabel('M (Number of UEs)', fontsize=12)
-    ax.set_ylabel('Mean Access Delay ($T_a$)', fontsize=12)
+    ax.set_ylabel('Mean Access Delay ($T_a$)', fontsize=12, color='blue')
+    ax.tick_params(axis='y', labelcolor='blue')
 
     N = data.get('N', '?')
     I_max = data.get('I_max', '?')
-    ax.set_title(f'Mean Access Delay vs M (N={N}, I_max={I_max})',
+    ax.set_title(f'UE Sweep: Mean Access Delay vs M (N={N}, I_max={I_max})',
                  fontsize=13, fontweight='bold')
 
-    ax.legend(fontsize=10)
+    ax.legend(loc='upper right', fontsize=10)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
 
@@ -138,18 +147,22 @@ def plot_ue_sweep_pc(data: dict, *, save_path: str = None, show: bool = False):
     fig, ax = plt.subplots(figsize=(10, 6))
 
     ax.plot(data['M_values'], data['P_C_values'],
-            'g-^', linewidth=2, markersize=5, label='Simulation')
+            'b-', linewidth=2, label='Simulation Curve')
+    ax.plot(data['M_values'], data['P_C_values'],
+            'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+            label='Simulation Results')
 
     ax.set_xlabel('M (Number of UEs)', fontsize=12)
-    ax.set_ylabel('Collision Probability ($P_C$)', fontsize=12)
+    ax.set_ylabel('Collision Probability ($P_C$)', fontsize=12, color='blue')
+    ax.tick_params(axis='y', labelcolor='blue')
     ax.set_ylim(0, 1.0)
 
     N = data.get('N', '?')
     I_max = data.get('I_max', '?')
-    ax.set_title(f'Collision Probability vs M (N={N}, I_max={I_max})',
+    ax.set_title(f'UE Sweep: Collision Probability vs M (N={N}, I_max={I_max})',
                  fontsize=13, fontweight='bold')
 
-    ax.legend(fontsize=10)
+    ax.legend(loc='upper right', fontsize=10)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
 
