@@ -1,20 +1,9 @@
 """Display and print helper functions for the CLI interface."""
 from __future__ import annotations
 
-from pathlib import Path
 from typing import NoReturn
 
-
-# Project root (one level up from app/)
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-
-def relpath(path) -> str:
-    """Return a path relative to the project root for cleaner display."""
-    try:
-        return str(Path(path).resolve().relative_to(PROJECT_ROOT))
-    except ValueError:
-        return str(path)
+from simulation.core.paths import relpath
 
 
 def _exit_missing_dependency(e: ModuleNotFoundError, *, context: str) -> NoReturn:

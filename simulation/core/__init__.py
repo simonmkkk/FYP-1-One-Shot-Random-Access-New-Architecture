@@ -21,8 +21,13 @@ from .runner import (
     run_n_scan,
     run_experiment,
     save_results_to_csv,
+)
+from .paths import (
     PROJECT_ROOT,
-    SIM_RESULT_ROOT,
+    SIMULATION_ROOT,
+    create_simulation_run_dir,
+    write_metadata,
+    relpath,
 )
 
 __all__ = [
@@ -45,6 +50,10 @@ __all__ = [
     'run_n_scan',
     'run_experiment',
     'save_results_to_csv',
+    # Paths
     'PROJECT_ROOT',
-    'SIM_RESULT_ROOT',
+    'SIMULATION_ROOT',
+    'create_simulation_run_dir',
+    'write_metadata',
+    'relpath',
 ]

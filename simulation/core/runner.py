@@ -6,25 +6,22 @@ from __future__ import annotations
 
 import csv
 import gc
-import os
 import time
-from datetime import datetime
 from pathlib import Path
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 import yaml
 
 from simulation.core.config import Config
 from simulation.core.metrics import SimulationResult, calculate_performance_metrics
 from simulation.core.one_shot_access import simulate_group_paging_multi_samples
-
-
-# ============================================================================
-# Path constants
-# ============================================================================
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SIM_RESULT_ROOT = PROJECT_ROOT / "result" / "simulation"
+from simulation.core.paths import (
+    PROJECT_ROOT,
+    SIMULATION_ROOT,
+    create_simulation_run_dir,
+    relpath,
+    write_metadata,
+)
 
 
 # ============================================================================
@@ -196,7 +193,7 @@ def save_results_to_csv(
                 "num_samples": result.num_samples,
             })
 
-    print(f"  Output: {output_path}")
+    print(f"  Output: {relpath(output_path)}")
 
 
 # ============================================================================
@@ -205,6 +202,7 @@ def save_results_to_csv(
 
 def run_experiment(
     config_path: Path | str,
+    output_dir: Optional[Path] = None,
 ) -> List[SimulationResult]:
     """
     Unified experiment runner.
@@ -215,6 +213,8 @@ def run_experiment(
 
     Args:
         config_path: Path to YAML configuration file.
+        output_dir: If set, save CSV to this directory.
+                    Otherwise use timestamped path under result/runs/simulation/.
 
     Returns:
         List[SimulationResult].
@@ -228,19 +228,29 @@ def run_experiment(
     else:
         results = run_n_scan(cfg)
 
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    output_dir = SIM_RESULT_ROOT / cfg.experiment_name / timestamp
-    output_path = output_dir / f"{cfg.experiment_name}.csv"
-
     if cfg.save_csv:
+        if output_dir is None:
+            output_dir = create_simulation_run_dir(cfg.experiment_name)
+        else:
+            output_dir = Path(output_dir)
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+        output_path = output_dir / f"{cfg.experiment_name}.csv"
         save_results_to_csv(results, output_path)
+
+        write_metadata(output_dir, {
+            "title": f"Simulation: {cfg.experiment_name}",
+            "run_type": "simulation",
+            "config": cfg.experiment_name,
+            "produced_files": {
+                "csv": output_path.name,
+            },
+        })
 
     return results
 
 
 __all__ = [
-    "PROJECT_ROOT",
-    "SIM_RESULT_ROOT",
     "run_single_n_simulation",
     "run_n_scan",
     "run_m_scan",

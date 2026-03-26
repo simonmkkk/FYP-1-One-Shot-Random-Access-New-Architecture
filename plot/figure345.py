@@ -17,6 +17,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def _compute_approximation_error_series(analytical_values, simulation_values):
+    """
+    Calculate relative error (%): |sim - analytical| / |analytical| * 100.
+    Returns None when analytical value is zero or missing.
+    """
+    if analytical_values is None or simulation_values is None:
+        return None
+
+    errors = []
+    for anal, sim in zip(analytical_values, simulation_values):
+        if anal is None or sim is None:
+            errors.append(None)
+            continue
+        if anal == 0:
+            errors.append(None)
+            continue
+        errors.append(abs(sim - anal) / abs(anal) * 100.0)
+    return errors
+
+
 def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, save_path: str = None, show: bool = False):
     """
     繪製 Figure 3 - Access Success Probability
@@ -63,9 +83,17 @@ def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, sav
     ax2.set_ylabel('Approximation Error (%)', fontsize=12, color='green')
     ax2.tick_params(axis='y', labelcolor='green')
     
-    # 從 simulation_data 讀取預先計算的誤差
-    if simulation_data and 'P_S_error' in simulation_data:
-        error_values = simulation_data['P_S_error']
+    # 優先使用預先計算誤差，若不存在則使用 analytical/simulation 自動計算
+    error_values = None
+    if simulation_data:
+        error_values = simulation_data.get('P_S_error')
+    if error_values is None and analytical_data and simulation_data:
+        error_values = _compute_approximation_error_series(
+            analytical_data.get('P_S_values'),
+            simulation_data.get('P_S_values'),
+        )
+
+    if error_values is not None and simulation_data:
         # 過濾掉 None 值
         valid_data = [(n, e) for n, e in zip(simulation_data['N_values'], error_values) if e is not None]
         if valid_data:
@@ -78,7 +106,8 @@ def plot_figure3(analytical_data: dict = None, simulation_data: dict = None, sav
     ax1.set_title(title, fontsize=13, fontweight='bold', pad=10)
     
     lines1, labels1 = ax1.get_legend_handles_labels()
-    ax1.legend(lines1, labels1, loc='upper left', fontsize=10)
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
     
     ax1.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -137,9 +166,17 @@ def plot_figure4(analytical_data: dict = None, simulation_data: dict = None, sav
     ax2.set_ylabel('Approximation Error (%)', fontsize=12, color='green')
     ax2.tick_params(axis='y', labelcolor='green')
     
-    # 從 simulation_data 讀取預先計算的誤差
-    if simulation_data and 'T_a_error' in simulation_data:
-        error_values = simulation_data['T_a_error']
+    # 優先使用預先計算誤差，若不存在則使用 analytical/simulation 自動計算
+    error_values = None
+    if simulation_data:
+        error_values = simulation_data.get('T_a_error')
+    if error_values is None and analytical_data and simulation_data:
+        error_values = _compute_approximation_error_series(
+            analytical_data.get('T_a_values'),
+            simulation_data.get('T_a_values'),
+        )
+
+    if error_values is not None and simulation_data:
         # 過濾掉 None 值
         valid_data = [(n, e) for n, e in zip(simulation_data['N_values'], error_values) if e is not None]
         if valid_data:
@@ -152,7 +189,8 @@ def plot_figure4(analytical_data: dict = None, simulation_data: dict = None, sav
     ax1.set_title(title, fontsize=13, fontweight='bold', pad=10)
     
     lines1, labels1 = ax1.get_legend_handles_labels()
-    ax1.legend(lines1, labels1, loc='upper right', fontsize=10)
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', fontsize=10)
     
     ax1.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -211,9 +249,17 @@ def plot_figure5(analytical_data: dict = None, simulation_data: dict = None, sav
     ax2.set_ylabel('Approximation Error (%)', fontsize=12, color='green')
     ax2.tick_params(axis='y', labelcolor='green')
     
-    # 從 simulation_data 讀取預先計算的誤差
-    if simulation_data and 'P_C_error' in simulation_data:
-        error_values = simulation_data['P_C_error']
+    # 優先使用預先計算誤差，若不存在則使用 analytical/simulation 自動計算
+    error_values = None
+    if simulation_data:
+        error_values = simulation_data.get('P_C_error')
+    if error_values is None and analytical_data and simulation_data:
+        error_values = _compute_approximation_error_series(
+            analytical_data.get('P_C_values'),
+            simulation_data.get('P_C_values'),
+        )
+
+    if error_values is not None and simulation_data:
         # 過濾掉 None 值
         valid_data = [(n, e) for n, e in zip(simulation_data['N_values'], error_values) if e is not None]
         if valid_data:
@@ -226,7 +272,8 @@ def plot_figure5(analytical_data: dict = None, simulation_data: dict = None, sav
     ax1.set_title(title, fontsize=13, fontweight='bold', pad=10)
     
     lines1, labels1 = ax1.get_legend_handles_labels()
-    ax1.legend(lines1, labels1, loc='upper right', fontsize=10)
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', fontsize=10)
     
     ax1.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -283,18 +330,21 @@ def plot_figure345(analytical_data: dict = None, simulation_data: dict = None, s
         sim_fig3 = {
             'N_values': simulation_data['N_values'],
             'P_S_values': simulation_data['P_S_values'],
+            'P_S_error': simulation_data.get('P_S_error'),
             'M': simulation_data.get('M'),
             'I_max': simulation_data.get('I_max'),
         }
         sim_fig4 = {
             'N_values': simulation_data['N_values'],
             'T_a_values': simulation_data['T_a_values'],
+            'T_a_error': simulation_data.get('T_a_error'),
             'M': simulation_data.get('M'),
             'I_max': simulation_data.get('I_max'),
         }
         sim_fig5 = {
             'N_values': simulation_data['N_values'],
             'P_C_values': simulation_data['P_C_values'],
+            'P_C_error': simulation_data.get('P_C_error'),
             'M': simulation_data.get('M'),
             'I_max': simulation_data.get('I_max'),
         }

@@ -5,14 +5,15 @@
 # for One-Shot Random Access analysis.
 #
 # Run directory layout:
-#   • Standalone runs → result/<category>/<name>/<timestamp>/
-#   • Pipeline runs   → result/<category>/<name>/<timestamp>/
+#   • Standalone runs → result/runs/<category>/<name>/<timestamp>/
+#   • Pipeline runs   → result/runs/pipeline/<timestamp>_<name>/
+#   • Plots create a data/ subdirectory with copy_of_<category>__<filename>
+#   • metadata.json in every run directory
 # ============================================================================
 
 import sys
 import time
 import csv
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -22,23 +23,27 @@ from app.display import (
     _print_simulation_params,
     _confirm_run,
 )
+from simulation.core.paths import (
+    ANALYTICAL_ROOT,
+    SIMULATION_ROOT,
+    create_analytical_run_dir,
+    create_simulation_run_dir,
+    create_plot_run_dir,
+    create_pipeline_run_dir,
+    ensure_run_dir,
+    relpath,
+    write_metadata,
+    copy_data_source,
+)
 
 # Add project root to Python path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+from simulation.core.paths import PROJECT_ROOT
 sys.path.insert(0, str(PROJECT_ROOT))
 
 
 # ============================================================================
 # Helper Functions
 # ============================================================================
-
-def get_result_dir(result_type: str, figure_name: str) -> Path:
-    """Get the output directory for results."""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    result_dir = PROJECT_ROOT / 'result' / result_type / figure_name / timestamp
-    result_dir.mkdir(parents=True, exist_ok=True)
-    return result_dir
-
 
 def _get_analytical_data_for_figure(figure_name: str):
     """Read analytical data for a specific figure from combined figure345 results."""
@@ -70,12 +75,7 @@ def _get_analytical_data_for_figure(figure_name: str):
 
 def _get_simulation_data_for_figure(figure_name: str):
     """Read simulation data for a specific figure."""
-    try:
-        from simulation.core.runner import PROJECT_ROOT as SIM_PROJECT_ROOT
-    except (ModuleNotFoundError, ImportError):
-        return None
-
-    sim_result_dir = SIM_PROJECT_ROOT / "result" / "simulation" / "figure345"
+    sim_result_dir = SIMULATION_ROOT / "figure345"
     if not sim_result_dir.exists():
         return None
 
@@ -119,11 +119,35 @@ def _get_simulation_data_for_figure(figure_name: str):
     }
 
 
+def _find_latest_run(category_root: Path, prefix: str) -> Optional[Path]:
+    """
+    Find the most recent timestamped run directory under category_root
+    whose name starts with prefix (sorted alphabetically → most recent last).
+    """
+    if not category_root.exists():
+        return None
+    candidates = sorted(
+        [d for d in category_root.iterdir() if d.is_dir() and d.name.startswith(prefix)],
+        key=lambda p: p.name,
+    )
+    return candidates[-1] if candidates else None
+
+
+def _find_csv_in_dir(directory: Optional[Path], filename: str) -> Optional[Path]:
+    """
+    Return the path to filename inside directory (flat layout) if it exists.
+    """
+    if directory is None:
+        return None
+    candidate = Path(directory) / filename
+    return candidate if candidate.exists() else None
+
+
 # ============================================================================
 # [Analytical] Functions
 # ============================================================================
 
-def run_analytical_figure1(*, _step: str = ""):
+def run_analytical_figure1(*, _step: str = "", output_dir: Optional[Path] = None):
     """
     Analytical: Figure 1 — NS,1/N & NC,1/N exact + approximate formulas.
     """
@@ -148,12 +172,16 @@ def run_analytical_figure1(*, _step: str = ""):
         if not _confirm_run():
             return False
 
-    result = run_figure1_analysis(config)
+    standalone = output_dir is None
+    if standalone:
+        output_dir = create_analytical_run_dir()
+
+    result = run_figure1_analysis(config, output_dir=output_dir)
     print("Figure 1 analysis completed.")
     return result
 
 
-def run_analytical_figure2(*, _step: str = ""):
+def run_analytical_figure2(*, _step: str = "", output_dir: Optional[Path] = None):
     """
     Analytical: Figure 2 — Approximation Error (exact vs approximate).
     """
@@ -178,11 +206,11 @@ def run_analytical_figure2(*, _step: str = ""):
         if not _confirm_run():
             return False
 
-    run_figure2_analysis(config)
+    run_figure2_analysis(config, output_dir=output_dir)
     print("Figure 2 analysis completed.")
 
 
-def run_analytical_figure345(*, _step: str = ""):
+def run_analytical_figure345(*, _step: str = "", output_dir: Optional[Path] = None):
     """
     Analytical: Figure 3, 4, 5 combined analysis (P_S, T_a, P_C).
     """
@@ -207,7 +235,11 @@ def run_analytical_figure345(*, _step: str = ""):
         if not _confirm_run():
             return False
 
-    run_figure345_analysis(config)
+    standalone = output_dir is None
+    if standalone:
+        output_dir = create_analytical_run_dir()
+
+    run_figure345_analysis(config, output_dir=output_dir)
     print("Figure 3, 4, 5 analysis completed.")
 
 
@@ -219,26 +251,28 @@ def run_analytical_all():
     except (ModuleNotFoundError, ImportError) as e:
         raise SystemExit(f"Missing dependency: {e}") from e
 
+    output_dir = create_analytical_run_dir()
+
     config = load_config('analytical', 'figure1')
 
     print("\n[1/3]")
     print("Running Analysis: Figure 1 (NS,1/N & NC,1/N)")
-    fig1_data = run_figure1_analysis(config)
+    fig1_data = run_figure1_analysis(config, output_dir=output_dir)
     print()
 
     print("[2/3]")
     print("Running Analysis: Figure 2 (Approximation Error)")
-    run_figure2_analysis(config, fig1_data=fig1_data)
+    run_figure2_analysis(config, fig1_data=fig1_data, output_dir=output_dir)
     print()
 
-    run_analytical_figure345(_step="[3/3]")
+    run_analytical_figure345(_step="[3/3]", output_dir=output_dir)
 
 
 # ============================================================================
 # [Simulation] Functions
 # ============================================================================
 
-def run_simulation_figure345(*, _step: str = ""):
+def run_simulation_figure345(*, _step: str = "", output_dir: Optional[Path] = None):
     """
     Simulation: Figure 3, 4, 5 combined simulation (P_S, T_a, P_C).
     """
@@ -270,14 +304,27 @@ def run_simulation_figure345(*, _step: str = ""):
         if not _confirm_run():
             return False
 
+    standalone = output_dir is None
+    if standalone:
+        output_dir = create_simulation_run_dir("figure345")
+
     # Use the configs path
     from configs.loader import CONFIGS_ROOT
     config_path = CONFIGS_ROOT / "simulation" / "config_figure345.yaml"
-    run_experiment(config_path)
+    run_experiment(config_path, output_dir=output_dir)
+
+    if standalone:
+        write_metadata(output_dir, {
+            "title": "Simulation: Figure 3, 4, 5 (P_S, T_a, P_C)",
+            "run_type": "simulation",
+            "config": "figure345",
+        })
+
     print("Figure 3, 4, 5 simulation completed.")
+    return output_dir
 
 
-def run_simulation_ue_sweep(*, _step: str = ""):
+def run_simulation_ue_sweep(*, _step: str = "", output_dir: Optional[Path] = None):
     """
     Simulation: UE Sweep — P_S, T_a, P_C vs M (fixed N).
     """
@@ -312,17 +359,35 @@ def run_simulation_ue_sweep(*, _step: str = ""):
         if not _confirm_run():
             return False
 
+    standalone = output_dir is None
+    if standalone:
+        output_dir = create_simulation_run_dir("ue_sweep")
+
     from configs.loader import CONFIGS_ROOT
     config_path = CONFIGS_ROOT / "simulation" / "config_ue_sweep.yaml"
-    run_experiment(config_path)
+    run_experiment(config_path, output_dir=output_dir)
+
+    if standalone:
+        write_metadata(output_dir, {
+            "title": "Simulation: UE Sweep (P_S, T_a, P_C vs M)",
+            "run_type": "simulation",
+            "config": "ue_sweep",
+        })
+
     print("UE Sweep simulation completed.")
+    return output_dir
 
 
 # ============================================================================
 # [Plot] Functions
 # ============================================================================
 
-def run_plot_figure1(*, _step: str = "", show: bool = True):
+def run_plot_figure1(
+    *,
+    _step: str = "",
+    show: bool = True,
+    save_path: Optional[Path] = None,
+):
     """
     Plot: Figure 1.
     """
@@ -340,14 +405,32 @@ def run_plot_figure1(*, _step: str = "", show: bool = True):
         print("No Figure 1 data found. Please run analytical option 1 first.")
         return
 
-    result_dir = get_result_dir('graph', 'figure1')
-    save_path = result_dir / "figure1.png"
+    standalone = save_path is None
+    if standalone:
+        plot_dir = create_plot_run_dir("figure1")
+        save_path = plot_dir / "figure1.png"
+    else:
+        plot_dir = save_path.parent
+
     plot_figure1(data, data_type='analytical', save_path=str(save_path), show=show)
     _print_output_path(save_path)
+
+    if standalone:
+        write_metadata(plot_dir, {
+            "title": "Plot: Figure 1",
+            "run_type": "plot",
+            "produced_files": {"png": save_path.name},
+        })
+
     print("Figure 1 plot completed.")
 
 
-def run_plot_figure2(*, _step: str = "", show: bool = True):
+def run_plot_figure2(
+    *,
+    _step: str = "",
+    show: bool = True,
+    save_path: Optional[Path] = None,
+):
     """
     Plot: Figure 2.
     """
@@ -365,16 +448,38 @@ def run_plot_figure2(*, _step: str = "", show: bool = True):
         print("No Figure 2 data found. Please run analytical option 2 first.")
         return
 
-    result_dir = get_result_dir('graph', 'figure2')
-    save_path = result_dir / "figure2.png"
+    standalone = save_path is None
+    if standalone:
+        plot_dir = create_plot_run_dir("figure2")
+        save_path = plot_dir / "figure2.png"
+    else:
+        plot_dir = save_path.parent
+
     plot_figure2(data, save_path=str(save_path), show=show)
     _print_output_path(save_path)
+
+    if standalone:
+        write_metadata(plot_dir, {
+            "title": "Plot: Figure 2",
+            "run_type": "plot",
+            "produced_files": {"png": save_path.name},
+        })
+
     print("Figure 2 plot completed.")
 
 
-def run_plot_figure345(*, _step: str = "", show: bool = True):
+def run_plot_figure345(
+    *,
+    _step: str = "",
+    show: bool = True,
+    analytical_path: Optional[Path] = None,
+    sim_dir: Optional[Path] = None,
+    save_dir: Optional[Path] = None,
+):
     """
     Plot: Figure 3, 4, 5.
+
+    Creates plot run dir with data/ copies + metadata.json.
     """
     try:
         from plot import plot_figure3, plot_figure4, plot_figure5
@@ -384,16 +489,26 @@ def run_plot_figure345(*, _step: str = "", show: bool = True):
     step_line = f"\n{_step}\n" if _step else "\n"
     print(f"{step_line}Plotting: Figure 3, 4, 5")
 
+    standalone = save_dir is None
+    if standalone:
+        plot_dir = create_plot_run_dir("figure345")
+    else:
+        plot_dir = Path(save_dir)
+        plot_dir.mkdir(parents=True, exist_ok=True)
+
+    produced_files = {}
+    meta_sources = {}
+
     # Figure 3
     analytical_data = _get_analytical_data_for_figure('figure3')
     simulation_data = _get_simulation_data_for_figure('figure3')
     if analytical_data is None and simulation_data is None:
         print("No Figure 3 data found. Please run option 3 or option 5 first.")
     else:
-        result_dir = get_result_dir('graph', 'figure3')
-        save_path = result_dir / "figure3.png"
+        save_path = plot_dir / "figure3.png"
         plot_figure3(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path), show=False)
         _print_output_path(save_path)
+        produced_files["figure3_png"] = save_path.name
 
     # Figure 4
     analytical_data = _get_analytical_data_for_figure('figure4')
@@ -401,10 +516,10 @@ def run_plot_figure345(*, _step: str = "", show: bool = True):
     if analytical_data is None and simulation_data is None:
         print("No Figure 4 data found. Please run option 3 or option 5 first.")
     else:
-        result_dir = get_result_dir('graph', 'figure4')
-        save_path = result_dir / "figure4.png"
+        save_path = plot_dir / "figure4.png"
         plot_figure4(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path), show=False)
         _print_output_path(save_path)
+        produced_files["figure4_png"] = save_path.name
 
     # Figure 5
     analytical_data = _get_analytical_data_for_figure('figure5')
@@ -412,15 +527,28 @@ def run_plot_figure345(*, _step: str = "", show: bool = True):
     if analytical_data is None and simulation_data is None:
         print("No Figure 5 data found. Please run option 3 or option 5 first.")
     else:
-        result_dir = get_result_dir('graph', 'figure5')
-        save_path = result_dir / "figure5.png"
+        save_path = plot_dir / "figure5.png"
         plot_figure5(analytical_data=analytical_data, simulation_data=simulation_data, save_path=str(save_path), show=show)
         _print_output_path(save_path)
+        produced_files["figure5_png"] = save_path.name
+
+    if standalone:
+        write_metadata(plot_dir, {
+            "title": "Plot: Figure 3, 4, 5",
+            "run_type": "plot",
+            "produced_files": produced_files,
+            **meta_sources,
+        })
 
     print("Figure 3, 4, 5 plots completed.")
 
 
-def run_plot_ue_sweep(*, _step: str = "", show: bool = True):
+def run_plot_ue_sweep(
+    *,
+    _step: str = "",
+    show: bool = True,
+    save_dir: Optional[Path] = None,
+):
     """
     Plot: UE Sweep (P_S, T_a, P_C vs M).
     """
@@ -437,9 +565,22 @@ def run_plot_ue_sweep(*, _step: str = "", show: bool = True):
         print("No UE Sweep data found. Please run option 6 first.")
         return
 
-    result_dir = get_result_dir('graph', 'ue_sweep')
-    plot_ue_sweep_all(data, save_dir=str(result_dir), show=show)
-    _print_output_path(result_dir)
+    standalone = save_dir is None
+    if standalone:
+        plot_dir = create_plot_run_dir("ue_sweep")
+    else:
+        plot_dir = Path(save_dir)
+        plot_dir.mkdir(parents=True, exist_ok=True)
+
+    plot_ue_sweep_all(data, save_dir=str(plot_dir), show=show)
+    _print_output_path(plot_dir)
+
+    if standalone:
+        write_metadata(plot_dir, {
+            "title": "Plot: UE Sweep (P_S, T_a, P_C vs M)",
+            "run_type": "plot",
+        })
+
     print("UE Sweep plots completed.")
 
 
@@ -462,57 +603,103 @@ def run_plot_all(show: bool = True):
 # [Pipeline] Functions (Analytical + Simulation + Plot)
 # ============================================================================
 
-def run_pipeline_figure1():
+def run_pipeline_figure1(output_dir: Optional[Path] = None):
     """
     Pipeline: Figure 1 (Analytical + Plot).
     """
-    print("\nOrder: Analytical → Plot")
+    standalone = output_dir is None
+    if standalone:
+        out = create_pipeline_run_dir("figure1")
+        print("\nOrder: Analytical → Plot")
+    else:
+        out = output_dir
 
-    run_analytical_figure1(_step="[1/2]")
+    run_analytical_figure1(_step="[1/2]", output_dir=out)
     print()
-    run_plot_figure1(_step="[2/2]", show=False)
 
+    save_path = out / "figure1.png"
+    run_plot_figure1(_step="[2/2]", show=False, save_path=save_path)
+
+    write_metadata(out, {
+        "title": "Pipeline: Figure 1",
+        "run_type": "pipeline",
+        "steps": ["analytical", "plot"],
+        "produced_files": {"plot_png": "figure1.png"},
+    })
     print("\nFigure 1 pipeline completed.")
 
 
-def run_pipeline_figure2():
+def run_pipeline_figure2(output_dir: Optional[Path] = None):
     """
     Pipeline: Figure 2 (Analytical + Plot).
     """
-    print("\nOrder: Analytical → Plot")
+    standalone = output_dir is None
+    if standalone:
+        out = create_pipeline_run_dir("figure2")
+        print("\nOrder: Analytical → Plot")
+    else:
+        out = output_dir
 
-    run_analytical_figure2(_step="[1/2]")
+    run_analytical_figure2(_step="[1/2]", output_dir=out)
     print()
-    run_plot_figure2(_step="[2/2]", show=False)
 
+    save_path = out / "figure2.png"
+    run_plot_figure2(_step="[2/2]", show=False, save_path=save_path)
+
+    write_metadata(out, {
+        "title": "Pipeline: Figure 2",
+        "run_type": "pipeline",
+        "steps": ["analytical", "plot"],
+        "produced_files": {"plot_png": "figure2.png"},
+    })
     print("\nFigure 2 pipeline completed.")
 
 
-def run_pipeline_figure345():
+def run_pipeline_figure345(output_dir: Optional[Path] = None):
     """
     Pipeline: Figure 3, 4, 5 (Analytical + Simulation + Plot).
     """
-    print("\nOrder: Analytical → Simulation → Plot")
+    standalone = output_dir is None
+    if standalone:
+        out = create_pipeline_run_dir("figure345")
+        print("\nOrder: Analytical → Simulation → Plot")
+    else:
+        out = output_dir
 
-    run_analytical_figure345(_step="[1/3]")
+    run_analytical_figure345(_step="[1/3]", output_dir=out)
     print()
-    run_simulation_figure345(_step="[2/3]")
+    run_simulation_figure345(_step="[2/3]", output_dir=out)
     print()
-    run_plot_figure345(_step="[3/3]", show=False)
+    run_plot_figure345(_step="[3/3]", show=False, save_dir=out)
 
+    write_metadata(out, {
+        "title": "Pipeline: Figure 3, 4, 5",
+        "run_type": "pipeline",
+        "steps": ["analytical", "simulation", "plot"],
+    })
     print("\nFigure 3, 4, 5 pipeline completed.")
 
 
-def run_pipeline_ue_sweep():
+def run_pipeline_ue_sweep(output_dir: Optional[Path] = None):
     """
     Pipeline: UE Sweep (Simulation + Plot).
     """
-    print("\nOrder: Simulation → Plot")
+    standalone = output_dir is None
+    if standalone:
+        out = create_pipeline_run_dir("ue_sweep")
+        print("\nOrder: Simulation → Plot")
+    else:
+        out = output_dir
 
-    run_simulation_ue_sweep(_step="[1/2]")
+    run_simulation_ue_sweep(_step="[1/2]", output_dir=out)
     print()
-    run_plot_ue_sweep(_step="[2/2]", show=False)
+    run_plot_ue_sweep(_step="[2/2]", show=False, save_dir=out)
 
+    write_metadata(out, {
+        "title": "Pipeline: UE Sweep",
+        "run_type": "pipeline",
+        "steps": ["simulation", "plot"],
+    })
     print("\nUE Sweep pipeline completed.")
 
 
@@ -533,4 +720,3 @@ def run_pipeline_all():
     run_pipeline_ue_sweep()
 
     print("\nFull pipeline completed.")
-

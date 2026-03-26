@@ -16,15 +16,20 @@ Position: Figure 2 的誤差分析核心
 
 import csv
 from pathlib import Path
-from datetime import datetime
 from .figure1_analysis import run_figure1_analysis, load_figure1_results
+from simulation.core.paths import ANALYTICAL_ROOT
 
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = None) -> dict:
+def run_figure2_analysis(
+    config: dict,
+    save_csv: bool = True,
+    fig1_data: dict = None,
+    output_dir: Path | None = None,
+) -> dict:
     """
     運行 Figure 2 解析計算（基於 Figure 1 數據）
     
@@ -38,6 +43,7 @@ def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = 
         config: 配置字典
         save_csv: 是否保存結果到 CSV
         fig1_data: 可選，直接傳入 Figure 1 的計算結果，避免重複運算
+        output_dir: CSV 輸出目錄（None 時使用 result/runs/analytical）
     
     Returns:
         結果字典
@@ -68,10 +74,10 @@ def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = 
                 missing = required_keys - available_keys
                 print(f"⚠ 缺少部分 N 值的數據: {missing}")
                 print("  重新運算 Figure 1...")
-                fig1_data = run_figure1_analysis(config, save_csv=True)
+                fig1_data = run_figure1_analysis(config, save_csv=True, output_dir=output_dir)
         else:
             print("⚠ 未找到已保存的 Figure 1 結果，開始運算...")
-            fig1_data = run_figure1_analysis(config, save_csv=True)
+            fig1_data = run_figure1_analysis(config, save_csv=True, output_dir=output_dir)
     
     print("\n正在計算誤差數據...")
     
@@ -120,16 +126,15 @@ def run_figure2_analysis(config: dict, save_csv: bool = True, fig1_data: dict = 
     
     # 保存結果到 CSV
     if save_csv:
-        save_figure2_results(error_results)
+        save_figure2_results(error_results, output_dir=output_dir)
     
     return error_results
 
 
-def save_figure2_results(results: dict):
+def save_figure2_results(results: dict, output_dir: Path | None = None):
     """保存 Figure 2 解析結果到 CSV 文件"""
-    # 創建結果目錄
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    result_dir = PROJECT_ROOT / 'result' / 'analytical' / 'figure2' / timestamp
+    # 統一輸出到 result/runs/analytical，避免重複目錄
+    result_dir = Path(output_dir) if output_dir is not None else ANALYTICAL_ROOT
     result_dir.mkdir(parents=True, exist_ok=True)
     
     # 為每個 N 值保存一個 CSV 文件
@@ -161,23 +166,16 @@ def save_figure2_results(results: dict):
 
 def load_figure2_results() -> dict:
     """從最新的 CSV 文件讀取 Figure 2 解析結果"""
-    result_base = PROJECT_ROOT / 'result' / 'analytical' / 'figure2'
-    
-    if not result_base.exists():
+    csv_files = sorted(ANALYTICAL_ROOT.glob('figure2_N*.csv'))
+    if not csv_files:
         return None
-    
-    # 找到最新的時間戳目錄
-    timestamp_dirs = sorted(result_base.iterdir(), reverse=True)
-    if not timestamp_dirs:
-        return None
-    
-    latest_dir = timestamp_dirs[0]
-    print(f"✓ 讀取最新數據: {latest_dir}")
-    
+
+    print(f"✓ 讀取最新數據: {ANALYTICAL_ROOT}")
+
     results = {}
     
     # 讀取所有 CSV 文件
-    for csv_file in latest_dir.glob('figure2_N*.csv'):
+    for csv_file in csv_files:
         N_value = csv_file.stem.split('_N')[1]
         key = f'N_{N_value}'
         

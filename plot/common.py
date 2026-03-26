@@ -14,11 +14,8 @@ Position: 繪圖模組的基礎設施
 import matplotlib
 import matplotlib.pyplot as plt
 
-# 嘗試使用互動後端
-try:
-    matplotlib.use('TkAgg')
-except Exception:
-    matplotlib.use('Agg')
+# 使用固定後端，避免環境差異造成行為不一致
+matplotlib.use('Agg')
 
 # 設置中文字體支持
 matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'DejaVu Sans']

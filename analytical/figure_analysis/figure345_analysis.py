@@ -19,22 +19,27 @@ Position: Figure 3, 4, 5 的解析計算核心
 
 import csv
 from pathlib import Path
-from datetime import datetime
 
 from ..theoretical.theoretical import theoretical_calculation
+from simulation.core.paths import ANALYTICAL_ROOT
 
 
 # 項目根目錄
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def run_figure345_analysis(config: dict, save_csv: bool = True) -> dict:
+def run_figure345_analysis(
+    config: dict,
+    save_csv: bool = True,
+    output_dir: Path | None = None,
+) -> dict:
     """
     運行 Figure 3, 4, 5 合併解析計算
     
     Args:
         config: 配置字典
         save_csv: 是否保存結果到 CSV
+        output_dir: CSV 輸出目錄（None 時使用 result/runs/analytical）
     
     Returns:
         結果字典，包含 P_S, T_a, P_C 三個指標
@@ -84,16 +89,15 @@ def run_figure345_analysis(config: dict, save_csv: bool = True) -> dict:
     
     # 保存結果到 CSV
     if save_csv:
-        save_figure345_results(results)
+        save_figure345_results(results, output_dir=output_dir)
     
     return results
 
 
-def save_figure345_results(results: dict):
+def save_figure345_results(results: dict, output_dir: Path | None = None):
     """保存 Figure 3, 4, 5 合併解析結果到 CSV 文件"""
-    # 創建結果目錄
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    result_dir = PROJECT_ROOT / 'result' / 'analytical' / 'figure345' / timestamp
+    # 統一輸出到 result/runs/analytical，避免重複目錄
+    result_dir = Path(output_dir) if output_dir is not None else ANALYTICAL_ROOT
     result_dir.mkdir(parents=True, exist_ok=True)
     
     save_path = result_dir / "figure345_analytical.csv"
@@ -125,19 +129,7 @@ def load_figure345_results() -> dict:
     Returns:
         結果字典，如果找不到則返回 None
     """
-    result_base = PROJECT_ROOT / 'result' / 'analytical' / 'figure345'
-    
-    if not result_base.exists():
-        return None
-    
-    # 找到最新的時間戳目錄
-    timestamp_dirs = sorted(result_base.iterdir(), reverse=True)
-    if not timestamp_dirs:
-        return None
-    
-    latest_dir = timestamp_dirs[0]
-    csv_path = latest_dir / "figure345_analytical.csv"
-    
+    csv_path = ANALYTICAL_ROOT / "figure345_analytical.csv"
     if not csv_path.exists():
         return None
     

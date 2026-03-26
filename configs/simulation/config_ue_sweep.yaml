@@ -17,7 +17,7 @@ simulation:
 
 # M values to sweep (UE count)
 # Supports: range "10-300:10", list [50,100,150], or single value 100
-m_values: "10-300:10"
+n_values: "5-46:1"
 
 # Output configuration
 output:

@@ -7,12 +7,10 @@ from pathlib import Path
 
 import matplotlib
 import matplotlib.pyplot as plt
+from simulation.core.paths import SIMULATION_ROOT
 
 # Backend setup
-try:
-    matplotlib.use('TkAgg')
-except Exception:
-    matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 
 # ============================================================================
@@ -27,8 +25,8 @@ def load_ue_sweep_results(result_dir: str = None) -> dict | None:
         dict with M_values, P_S_values, T_a_values, P_C_values, N, I_max.
     """
     if result_dir is None:
-        project_root = Path(__file__).resolve().parent.parent
-        result_dir = project_root / "result" / "simulation" / "ue_sweep"
+        # Unified run path: result/runs/simulation/ue_sweep/<timestamp>/
+        result_dir = SIMULATION_ROOT / "ue_sweep"
 
     result_dir = Path(result_dir)
     if not result_dir.exists():

@@ -12,6 +12,7 @@
 #       ├── constants.py         # Default constants
 #       ├── metrics.py           # Performance metrics
 #       ├── one_shot_access.py   # Simulation engine
+#       ├── paths.py             # Central path helpers
 #       ├── runner.py            # Parallel execution
 #       └── utils/
 #           └── progress_manager.py  # Rich progress bar
@@ -37,8 +38,16 @@ from .core.runner import (
     run_n_scan,
     run_experiment,
     save_results_to_csv,
+)
+from .core.paths import (
     PROJECT_ROOT,
-    SIM_RESULT_ROOT,
+    SIMULATION_ROOT,
+    create_simulation_run_dir,
+    create_plot_run_dir,
+    create_pipeline_run_dir,
+    write_metadata,
+    copy_data_source,
+    relpath,
 )
 
 # Simulation entry point
@@ -64,8 +73,15 @@ __all__ = [
     'run_n_scan',
     'run_experiment',
     'save_results_to_csv',
+    # Paths
     'PROJECT_ROOT',
-    'SIM_RESULT_ROOT',
+    'SIMULATION_ROOT',
+    'create_simulation_run_dir',
+    'create_plot_run_dir',
+    'create_pipeline_run_dir',
+    'write_metadata',
+    'copy_data_source',
+    'relpath',
     # Entry point
     'run_figure345',
 ]
