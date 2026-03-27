@@ -15,7 +15,7 @@ description: "Figure 3, 4, 5 simulation (P_S, T_a, P_C) — paper reproduction"
 simulation:
   M: 100               # Total UEs (paper: M = 100)
   I_max: 10            # Max Access Cycles (paper: I_max = 10)
-  num_samples: 1000   # Paper precision: 10^7 samples
+  num_samples: 10000000   # Paper precision: 10^7 samples
   num_workers: -1      # Parallel workers (-1 = all CPU cores)
 
 # N values to sweep
