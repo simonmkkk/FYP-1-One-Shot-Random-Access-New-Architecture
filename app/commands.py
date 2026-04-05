@@ -22,6 +22,7 @@ from app.display import (
     _print_analytical_params,
     _print_simulation_params,
     _confirm_run,
+    format_n_values_for_display,
 )
 from simulation.core.paths import (
     ANALYTICAL_ROOT,
@@ -162,9 +163,9 @@ def run_analytical_figure1(*, _step: str = "", output_dir: Optional[Path] = None
     step_line = f"\n{_step}\n" if _step else "\n"
     print(f"{step_line}Running Analysis: Figure 1 (NS,1/N & NC,1/N)")
     print("------ Analytical Configuration ------")
-    print(f"  [N Values]")
-    print(f"  N = {config['n_values']}")
-    print(f"  M/N max = {config['m_over_n_max']}")
+    print("  [RAO Slots]")
+    print(f"  N={format_n_values_for_display(config['n_values'])}")
+    print(f"  M/N max={config['m_over_n_max']}")
     print("--------------------------------------")
     print()
 
@@ -196,9 +197,9 @@ def run_analytical_figure2(*, _step: str = "", output_dir: Optional[Path] = None
     step_line = f"\n{_step}\n" if _step else "\n"
     print(f"{step_line}Running Analysis: Figure 2 (Approximation Error)")
     print("------ Analytical Configuration ------")
-    print(f"  [N Values]")
-    print(f"  N = {config['n_values']}")
-    print(f"  M/N max = {config['m_over_n_max']}")
+    print("  [RAO Slots]")
+    print(f"  N={format_n_values_for_display(config['n_values'])}")
+    print(f"  M/N max={config['m_over_n_max']}")
     print("--------------------------------------")
     print()
 
@@ -291,13 +292,13 @@ def run_simulation_figure345(*, _step: str = "", output_dir: Optional[Path] = No
     n_values = Config.parse_n_values(config.get('n_values', []))
 
     step_line = f"\n{_step}\n" if _step else "\n"
-    print(f"{step_line}Running Simulation: Figure 3, 4, 5 (P_S, T_a, P_C)")
+    print(f"{step_line}Running Simulation: One-shot Random Access")
+    print()
     _print_simulation_params(
         M=sim.get('M', 100),
         I_max=sim.get('I_max', 10),
         N_values=n_values,
         num_samples=sim.get('num_samples', 10000),
-        num_workers=sim.get('num_workers', -1),
     )
 
     if not _step:
@@ -343,15 +344,15 @@ def run_simulation_ue_sweep(*, _step: str = "", output_dir: Optional[Path] = Non
 
     step_line = f"\n{_step}\n" if _step else "\n"
     print(f"{step_line}Running Simulation: UE Sweep (P_S, T_a, P_C vs M)")
-    print("------ Simulation Configuration ------")
+    print("------ Configuration ------")
     print("  [Parameters]")
     print(f"  N={sim.get('N', 50)} (fixed), I_max={sim.get('I_max', 10)}")
     print()
     print("  [M Values (UE count)]")
-    print(f"  M = {list(m_values)}")
+    print(f"  M={list(m_values)}")
     print()
     print("  [Monte Carlo]")
-    print(f"  num_samples = {sim.get('num_samples', 10000):,}")
+    print(f"  num_samples={sim.get('num_samples', 10000):,}")
     print("--------------------------------------")
     print()
 

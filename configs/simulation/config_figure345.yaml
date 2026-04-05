@@ -20,7 +20,7 @@ simulation:
 
 # N values to sweep
 # Supports: range "10-300:10", list [5,10,15], or single value 50
-n_values: "5-46:1"
+n_values: "5-45:1"
 
 # Output configuration
 output:
