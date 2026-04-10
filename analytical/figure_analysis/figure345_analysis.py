@@ -52,13 +52,13 @@ def run_figure345_analysis(
     N_range = range(N_start, N_stop, N_step)
     
     print("=" * 70)
-    print("Figure 3, 4, 5 合併解析計算")
+    print("Figure 3, 4, 5 combined analytical computation")
     print("  - Figure 3: Access Success Probability (P_S)")
     print("  - Figure 4: Mean Access Delay (T_a)")
     print("  - Figure 5: Collision Probability (P_C)")
     print("=" * 70)
     print(f"M = {M}, I_max = {I_max}")
-    print(f"N 範圍: {N_start} 到 {N_stop-1}")
+    print(f"N range: {N_start} to {N_stop-1}")
     print("=" * 70)
     
     N_values = []
@@ -84,7 +84,7 @@ def run_figure345_analysis(
     }
     
     print("\n" + "=" * 70)
-    print("Figure 3, 4, 5 合併解析計算完成!")
+    print("Figure 3, 4, 5 combined analytical computation completed!")
     print("=" * 70)
     
     # 保存結果到 CSV
@@ -119,7 +119,7 @@ def save_figure345_results(results: dict, output_dir: Path | None = None):
                 I_max
             ])
     
-    print(f"✓ 合併解析結果已保存: {save_path}")
+    print(f"✓ Combined analytical results saved: {save_path}")
 
 
 def load_figure345_results() -> dict:

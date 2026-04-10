@@ -12,7 +12,6 @@
 # ============================================================================
 
 import sys
-import time
 import csv
 from pathlib import Path
 from typing import Optional
@@ -25,16 +24,12 @@ from app.display import (
     format_n_values_for_display,
 )
 from simulation.core.paths import (
-    ANALYTICAL_ROOT,
     SIMULATION_ROOT,
     create_analytical_run_dir,
     create_simulation_run_dir,
     create_plot_run_dir,
     create_pipeline_run_dir,
-    ensure_run_dir,
-    relpath,
     write_metadata,
-    copy_data_source,
 )
 
 # Add project root to Python path
@@ -188,7 +183,7 @@ def run_analytical_figure2(*, _step: str = "", output_dir: Optional[Path] = None
     """
     try:
         from configs import load_config
-        from analytical.figure_analysis import run_figure1_analysis, run_figure2_analysis
+        from analytical.figure_analysis import run_figure2_analysis
     except (ModuleNotFoundError, ImportError) as e:
         raise SystemExit(f"Missing dependency: {e}") from e
 
@@ -341,6 +336,12 @@ def run_simulation_ue_sweep(*, _step: str = "", output_dir: Optional[Path] = Non
 
     # Parse m_values (supports range string "10-300:10", list, or int)
     m_values = Config.parse_n_values(config.get('m_values', []))
+    if not m_values:
+        raise SystemExit(
+            "Invalid UE Sweep config: 'm_values' is empty. "
+            "Set m_values in configs/simulation/config_ue_sweep.yaml "
+            '(e.g. "10-300:10").'
+        )
 
     step_line = f"\n{_step}\n" if _step else "\n"
     print(f"{step_line}Running Simulation: UE Sweep (P_S, T_a, P_C vs M)")
@@ -473,8 +474,6 @@ def run_plot_figure345(
     *,
     _step: str = "",
     show: bool = True,
-    analytical_path: Optional[Path] = None,
-    sim_dir: Optional[Path] = None,
     save_dir: Optional[Path] = None,
 ):
     """

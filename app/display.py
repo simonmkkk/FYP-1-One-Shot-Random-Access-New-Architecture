@@ -41,7 +41,7 @@ def _print_analytical_params(*, M: int, I_max: int, N_values, figure_name: str =
     """Print analytical configuration summary matching FYP2 style."""
     print("------ Analytical Configuration ------")
     if figure_name:
-        print(f"  [Figure]")
+        print("  [Figure]")
         print(f"  {figure_name}")
         print()
     print("  [UE]")

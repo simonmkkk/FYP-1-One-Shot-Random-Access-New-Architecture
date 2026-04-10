@@ -32,7 +32,7 @@ def _get_actual_n_jobs(n_jobs: int) -> int:
     return n_jobs
 
 
-def _parallel_compute(func, args_list, n_jobs: int, desc: str = "計算中"):
+def _parallel_compute(func, args_list, n_jobs: int, desc: str = "Computing"):
     """
     並行計算輔助函數
     
@@ -49,7 +49,7 @@ def _parallel_compute(func, args_list, n_jobs: int, desc: str = "計算中"):
     """
     actual_n_jobs = _get_actual_n_jobs(n_jobs)
     total_tasks = len(args_list)
-    print(f"  {desc}... (使用 {actual_n_jobs} 個進程, 共 {total_tasks} 個任務)")
+    print(f"  {desc}... ({actual_n_jobs} processes, {total_tasks} tasks)")
     
     start_time = time.time()
     
@@ -73,10 +73,10 @@ def _parallel_compute(func, args_list, n_jobs: int, desc: str = "計算中"):
             # 進度顯示（每 10% 或最後一個顯示一次）
             if completed % max(1, total_tasks // 10) == 0 or completed == total_tasks:
                 progress = completed / total_tasks * 100
-                print(f"    進度: {completed}/{total_tasks} ({progress:.0f}%)")
+                print(f"    Progress: {completed}/{total_tasks} ({progress:.0f}%)")
     
     elapsed = time.time() - start_time
-    print(f"  完成! 耗時: {elapsed:.2f}秒")
+    print(f"  Done! Elapsed: {elapsed:.2f}s")
     
     return results
 
@@ -131,27 +131,24 @@ def run_figure1_analysis(
     
     print("=" * 60)
     print("Figure 1: Analytical Model vs Approximation")
-    print(f"N 值: {n_values}")
-    print(f"M 範圍: {m_start} 到 {m_over_n_max}*N")
-    print(f"CPU 核心: {actual_n_jobs}")
+    print(f"N values: {n_values}")
+    print(f"M range: {m_start} to {m_over_n_max}*N")
+    print(f"CPU cores: {actual_n_jobs}")
     print("=" * 60)
     
     results = {}
     
     for N in n_values:
-        print(f"\n正在計算 N={N} 的數據...")
+        print(f"\nComputing data for N={N}...")
         
         # 論文: integer valued of M ranging from 1 to 10N
         M_range = list(range(m_start, m_over_n_max * N + 1))
-        print(f"  M 範圍: {m_start} 到 {m_over_n_max * N}，共 {len(M_range)} 個數據點")
-        
-        # 記錄每個 N 的計算時間
-        n_start_time = time.time()
+        print(f"  M range: {m_start} to {m_over_n_max * N}, total {len(M_range)} points")
         
         args_list = [(M, N) for M in M_range]
         results_list = _parallel_compute(
             compute_single_point, args_list, n_jobs, 
-            f"計算 N={N}"
+            f"Computing N={N}"
         )
         
         
@@ -171,7 +168,7 @@ def run_figure1_analysis(
         }
     
     print("\n" + "=" * 60)
-    print("Figure 1 解析計算完成!")
+    print("Figure 1 analytical computation completed!")
     print("=" * 60)
     
     # 保存結果到 CSV
@@ -208,7 +205,7 @@ def save_figure1_results(results: dict, output_dir: Path | None = None):
                         data['approx_N_C'][i]
                     ])
             
-            print(f"✓ 解析結果已保存: {save_path}")
+            print(f"✓ Analytical results saved: {save_path}")
 
 
 def load_figure1_results() -> dict:
@@ -217,7 +214,7 @@ def load_figure1_results() -> dict:
     if not csv_files:
         return None
 
-    print(f"✓ 讀取最新數據: {ANALYTICAL_ROOT}")
+    print(f"✓ Loading latest data from: {ANALYTICAL_ROOT}")
 
     results = {}
     
@@ -245,7 +242,7 @@ def load_figure1_results() -> dict:
                 data['approx_N_C'].append(float(row['approx_N_C']))
             
             results[key] = data
-            print(f"  ✓ 讀取 N={N_value}: {len(data['M_values'])} 個數據點")
+            print(f"  ✓ Loaded N={N_value}: {len(data['M_values'])} data points")
     
     return results if results else None
 

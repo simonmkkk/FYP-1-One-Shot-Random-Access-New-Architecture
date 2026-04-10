@@ -14,7 +14,6 @@ Position: Figure 3, 4, 5 可視化
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def _compute_approximation_error_series(analytical_values, simulation_values):

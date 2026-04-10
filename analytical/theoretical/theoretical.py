@@ -11,7 +11,6 @@ Position: 解析計算的數學引擎
 - 項目根目錄 README.md
 """
 
-import numpy as np
 from ..formulas.formulas import (
     paper_formula_5_collision_approx,
     paper_formula_6_success_per_cycle,

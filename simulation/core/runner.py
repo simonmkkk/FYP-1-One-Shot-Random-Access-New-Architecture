@@ -6,18 +6,13 @@ from __future__ import annotations
 
 import csv
 import gc
-import time
 from pathlib import Path
 from typing import List, Optional, Sequence
-
-import yaml
 
 from simulation.core.config import Config
 from simulation.core.metrics import SimulationResult, calculate_performance_metrics
 from simulation.core.one_shot_access import simulate_group_paging_multi_samples
 from simulation.core.paths import (
-    PROJECT_ROOT,
-    SIMULATION_ROOT,
     create_simulation_run_dir,
     relpath,
     write_metadata,

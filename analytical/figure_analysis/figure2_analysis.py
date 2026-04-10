@@ -52,15 +52,15 @@ def run_figure2_analysis(
     
     print("=" * 60)
     print("Figure 2: Approximation Error Analysis")
-    print(f"N 值: {n_values}")
+    print(f"N values: {n_values}")
     print("=" * 60)
     
     # 獲取 Figure 1 數據的優先順序
     if fig1_data is not None:
-        print("\n✓ 使用傳入的 Figure 1 數據")
+        print("\n✓ Using provided Figure 1 data")
     else:
         # 嘗試讀取已保存的結果
-        print("\n嘗試讀取已保存的 Figure 1 結果...")
+        print("\nTrying to load saved Figure 1 results...")
         fig1_data = load_figure1_results()
         
         if fig1_data is not None:
@@ -69,17 +69,17 @@ def run_figure2_analysis(
             available_keys = set(fig1_data.keys())
             
             if required_keys.issubset(available_keys):
-                print("✓ 已找到所需的 Figure 1 數據，跳過重複運算")
+                print("✓ Required Figure 1 data found; skipping recomputation")
             else:
                 missing = required_keys - available_keys
-                print(f"⚠ 缺少部分 N 值的數據: {missing}")
-                print("  重新運算 Figure 1...")
+                print(f"⚠ Missing data for some N values: {missing}")
+                print("  Recomputing Figure 1...")
                 fig1_data = run_figure1_analysis(config, save_csv=True, output_dir=output_dir)
         else:
-            print("⚠ 未找到已保存的 Figure 1 結果，開始運算...")
+            print("⚠ No saved Figure 1 results found, starting computation...")
             fig1_data = run_figure1_analysis(config, save_csv=True, output_dir=output_dir)
     
-    print("\n正在計算誤差數據...")
+    print("\nComputing error metrics...")
     
     error_results = {}
     
@@ -121,7 +121,7 @@ def run_figure2_analysis(
         }
     
     print("\n" + "=" * 60)
-    print("Figure 2 解析計算完成!")
+    print("Figure 2 analytical computation completed!")
     print("=" * 60)
     
     # 保存結果到 CSV
@@ -161,7 +161,7 @@ def save_figure2_results(results: dict, output_dir: Path | None = None):
                         data['N_C_error'][i]
                     ])
             
-            print(f"✓ 解析結果已保存: {save_path}")
+            print(f"✓ Analytical results saved: {save_path}")
 
 
 def load_figure2_results() -> dict:
@@ -170,7 +170,7 @@ def load_figure2_results() -> dict:
     if not csv_files:
         return None
 
-    print(f"✓ 讀取最新數據: {ANALYTICAL_ROOT}")
+    print(f"✓ Loading latest data from: {ANALYTICAL_ROOT}")
 
     results = {}
     
@@ -202,7 +202,7 @@ def load_figure2_results() -> dict:
                 data['N_C_error'].append(float(row['N_C_error(%)']))
             
             results[key] = data
-            print(f"  ✓ 讀取 N={N_value}: {len(data['M_values'])} 個數據點")
+            print(f"  ✓ Loaded N={N_value}: {len(data['M_values'])} data points")
     
     return results if results else None
 
